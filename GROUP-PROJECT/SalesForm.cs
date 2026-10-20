@@ -12,6 +12,12 @@ namespace GROUP_PROJECT
 
         public SalesForm() { InitializeComponent(); }
 
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
+        }
+
         private void SalesForm_Load(object sender, EventArgs e)
         {
             try { RefreshData(); }

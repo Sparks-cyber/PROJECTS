@@ -5,6 +5,11 @@ namespace GROUP_PROJECT
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Panel pnlRestock;
+        private System.Windows.Forms.Label lblTitle;
+        private System.Windows.Forms.Label lblSubtitle;
+        private System.Windows.Forms.Label lblProduct;
+        private System.Windows.Forms.Label lblQuantity;
+        private System.Windows.Forms.Label lblStockTitle;
         private System.Windows.Forms.ComboBox cboProduct;
         private System.Windows.Forms.NumericUpDown numQuantity;
         private System.Windows.Forms.Button btnRestock;
@@ -14,7 +19,7 @@ namespace GROUP_PROJECT
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing) { if (components != null) components.Dispose(); db.Dispose(); }
+            if (disposing && (components != null)) components.Dispose();
             base.Dispose(disposing);
         }
 
@@ -23,6 +28,11 @@ namespace GROUP_PROJECT
         {
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.pnlRestock = new System.Windows.Forms.Panel();
+            this.lblTitle = new System.Windows.Forms.Label();
+            this.lblSubtitle = new System.Windows.Forms.Label();
+            this.lblProduct = new System.Windows.Forms.Label();
+            this.lblQuantity = new System.Windows.Forms.Label();
+            this.lblStockTitle = new System.Windows.Forms.Label();
             this.cboProduct = new System.Windows.Forms.ComboBox();
             this.numQuantity = new System.Windows.Forms.NumericUpDown();
             this.btnRestock = new System.Windows.Forms.Button();
@@ -36,15 +46,34 @@ namespace GROUP_PROJECT
             this.pnlHeader.BackColor = System.Drawing.Color.White;
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Height = 96;
-            this.pnlHeader.Controls.Add(MakeLabel("INVENTORY", 28, 15, 21F, true));
-            this.pnlHeader.Controls.Add(MakeLabel("Monitor stock levels and restock products.", 31, 61, 9F, false));
+            this.lblTitle.AutoSize = true;
+            this.lblTitle.Text = "INVENTORY";
+            this.lblTitle.Location = new System.Drawing.Point(28, 15);
+            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 21F, System.Drawing.FontStyle.Bold);
+            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(48, 70, 57);
+            this.lblSubtitle.AutoSize = true;
+            this.lblSubtitle.Text = "Monitor stock levels and restock products.";
+            this.lblSubtitle.Location = new System.Drawing.Point(31, 61);
+            this.lblSubtitle.ForeColor = System.Drawing.Color.DimGray;
+            this.pnlHeader.Controls.Add(this.lblTitle);
+            this.pnlHeader.Controls.Add(this.lblSubtitle);
 
             this.pnlRestock.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.pnlRestock.BackColor = System.Drawing.Color.White;
             this.pnlRestock.Location = new System.Drawing.Point(24, 118);
             this.pnlRestock.Size = new System.Drawing.Size(916, 142);
-            this.pnlRestock.Controls.Add(MakeLabel("PRODUCT", 22, 20, 8F, true));
-            this.pnlRestock.Controls.Add(MakeLabel("ADD STOCK", 402, 20, 8F, true));
+            this.lblProduct.AutoSize = true;
+            this.lblProduct.Text = "PRODUCT";
+            this.lblProduct.Location = new System.Drawing.Point(22, 20);
+            this.lblProduct.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.lblProduct.ForeColor = System.Drawing.Color.DimGray;
+            this.lblQuantity.AutoSize = true;
+            this.lblQuantity.Text = "ADD STOCK";
+            this.lblQuantity.Location = new System.Drawing.Point(402, 20);
+            this.lblQuantity.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.lblQuantity.ForeColor = System.Drawing.Color.DimGray;
+            this.pnlRestock.Controls.Add(this.lblProduct);
+            this.pnlRestock.Controls.Add(this.lblQuantity);
 
             this.cboProduct.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboProduct.Font = new System.Drawing.Font("Segoe UI", 10F);
@@ -88,7 +117,23 @@ namespace GROUP_PROJECT
             this.lblSummary.Size = new System.Drawing.Size(376, 25);
             this.lblSummary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 
-            SetupGrid(this.gridInventory);
+            this.gridInventory.AllowUserToAddRows = false;
+            this.gridInventory.AllowUserToDeleteRows = false;
+            this.gridInventory.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            this.gridInventory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.gridInventory.BackgroundColor = System.Drawing.Color.White;
+            this.gridInventory.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.gridInventory.ColumnHeadersHeight = 42;
+            this.gridInventory.EnableHeadersVisualStyles = false;
+            this.gridInventory.MultiSelect = false;
+            this.gridInventory.ReadOnly = true;
+            this.gridInventory.RowHeadersVisible = false;
+            this.gridInventory.RowTemplate.Height = 38;
+            this.gridInventory.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridInventory.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(77, 108, 88);
+            this.gridInventory.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
+            this.gridInventory.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(225, 237, 229);
+            this.gridInventory.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(48, 70, 57);
             this.gridInventory.Location = new System.Drawing.Point(24, 318);
             this.gridInventory.Size = new System.Drawing.Size(916, 296);
 
@@ -98,7 +143,12 @@ namespace GROUP_PROJECT
             this.ClientSize = new System.Drawing.Size(964, 636);
             this.Controls.Add(this.gridInventory);
             this.Controls.Add(this.lblSummary);
-            this.Controls.Add(MakeLabel("CURRENT STOCK", 24, 286, 11F, true));
+            this.lblStockTitle.AutoSize = true;
+            this.lblStockTitle.Text = "CURRENT STOCK";
+            this.lblStockTitle.Location = new System.Drawing.Point(24, 286);
+            this.lblStockTitle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblStockTitle.ForeColor = System.Drawing.Color.FromArgb(48, 70, 57);
+            this.Controls.Add(this.lblStockTitle);
             this.Controls.Add(this.pnlRestock);
             this.Controls.Add(this.pnlHeader);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
@@ -112,28 +162,6 @@ namespace GROUP_PROJECT
             this.PerformLayout();
         }
 
-        private static System.Windows.Forms.Label MakeLabel(string text, int x, int y, float size, bool bold)
-        {
-            return new System.Windows.Forms.Label { AutoSize = true, Text = text,
-                Location = new System.Drawing.Point(x, y),
-                Font = new System.Drawing.Font("Segoe UI", size, bold ? System.Drawing.FontStyle.Bold : System.Drawing.FontStyle.Regular),
-                ForeColor = bold ? System.Drawing.Color.FromArgb(48, 70, 57) : System.Drawing.Color.DimGray };
-        }
-
-        private static void SetupGrid(System.Windows.Forms.DataGridView grid)
-        {
-            grid.AllowUserToAddRows = false; grid.AllowUserToDeleteRows = false;
-            grid.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            grid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            grid.BackgroundColor = System.Drawing.Color.White; grid.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            grid.ColumnHeadersHeight = 42; grid.EnableHeadersVisualStyles = false; grid.MultiSelect = false;
-            grid.ReadOnly = true; grid.RowHeadersVisible = false; grid.RowTemplate.Height = 38;
-            grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            grid.ColumnHeadersDefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(77, 108, 88);
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = System.Drawing.Color.White;
-            grid.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(225, 237, 229);
-            grid.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(48, 70, 57);
-        }
         #endregion
     }
 }

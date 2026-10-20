@@ -12,6 +12,12 @@ namespace GROUP_PROJECT
 
         public InventoryForm() { InitializeComponent(); }
 
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
+        }
+
         private void InventoryForm_Load(object sender, EventArgs e)
         {
             try { RefreshInventory(); }
