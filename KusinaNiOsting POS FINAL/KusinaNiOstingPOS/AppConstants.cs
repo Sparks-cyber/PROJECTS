@@ -8,6 +8,12 @@ namespace MiniMartPOS
 
         public const string PaymentCash = "Cash";
         public const string PaymentGCash = "GCash";
+        public const string TransactionPrefix = "TRX-";
+        public const string TransactionDateFormat = "yyyyMMddHHmmssfff";
+        public const string AllCategoriesText = "All";
+        public const int AllCategoriesID = 0;
+        public const int SortPriceLowToHigh = 1;
+        public const int SortPriceHighToLow = 2;
 
         public const string StatusAvailable = "Available";
         public const string StatusUnavailable = "Unavailable";
