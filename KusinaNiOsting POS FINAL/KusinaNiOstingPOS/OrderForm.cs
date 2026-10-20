@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -57,11 +56,6 @@ namespace MiniMartPOS
         private void ConfigureProductCard(Button button)
         {
             button.Click += ProductButton_Click;
-            button.Paint += ProductButton_Paint;
-
-            Button captured = button;
-            captured.MouseEnter += delegate { ApplyProductCardState(captured,true); };
-            captured.MouseLeave += delegate { ApplyProductCardState(captured,false); };
         }
 
         private Button[] ProductButtons() { return productButtons.ToArray(); }
@@ -134,10 +128,10 @@ namespace MiniMartPOS
                 if(!cardButton.Visible) continue;
                 int col = visibleIndex % columns, row = visibleIndex / columns;
                 cardButton.SetBounds(4 + col * (buttonWidth + cardGap), 12 + row * (buttonHeight + cardGap), buttonWidth, buttonHeight);
-                cardButton.TextImageRelation = TextImageRelation.Overlay;
+                cardButton.TextImageRelation = TextImageRelation.ImageAboveText;
                 cardButton.UseVisualStyleBackColor = false;
                 cardButton.ImageAlign = ContentAlignment.TopCenter;
-                cardButton.TextAlign = ContentAlignment.MiddleCenter;
+                cardButton.TextAlign = ContentAlignment.BottomCenter;
                 cardButton.Padding = new Padding(6, 12, 6, 10);
                 cardButton.FlatAppearance.BorderSize = 0;
                 UiStyle.RoundControl(cardButton, 13);
@@ -182,15 +176,15 @@ namespace MiniMartPOS
                             ProductImage productImage = DatabaseData.ProductImages.FirstOrDefault(p =>
                                 p.MenuItemID == item.MenuItemID && p.IsPrimary);
 
-                            button.Text = "";
+                            button.Text = item.ItemName + "\n₱" + item.Price.ToString("N2") +
+                                "\nStock: " + item.Stock;
                             button.Enabled = true;
                             button.Visible = true;
-                            button.BackColor = Color.FromArgb(54,43,36);
                             buttonItemIds[button] = item.MenuItemID;
 
-                            button.TextAlign = ContentAlignment.MiddleCenter;
+                            button.TextAlign = ContentAlignment.BottomCenter;
                             button.ImageAlign = ContentAlignment.TopCenter;
-                            button.TextImageRelation = TextImageRelation.Overlay;
+                            button.TextImageRelation = TextImageRelation.ImageAboveText;
                             button.Padding = new Padding(6, 12, 6, 10);
 
                             if (productImage != null)
@@ -232,57 +226,6 @@ namespace MiniMartPOS
             RefreshCart();
         }
 
-        // EVENT: ProductButton_Paint - runs when the user interacts with this control.
-
-        private void ProductButton_Paint(object sender, PaintEventArgs e)
-        {
-            Button button=sender as Button;
-            if(button==null || !buttonItemIds.ContainsKey(button)) return;
-            int itemId=buttonItemIds[button];
-            MenuItem item=DatabaseData.MenuItems.First(x=>x.MenuItemID==itemId);
-            CartLine line=cart.FirstOrDefault(x=>x.MenuItemID==itemId);
-            bool selected=line!=null && line.Quantity>0;
-            e.Graphics.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-            Color border=selected?Color.FromArgb(249,115,22):Color.FromArgb(82,62,50);
-            using(Pen borderPen=new Pen(border,selected?2f:1f))
-                e.Graphics.DrawRoundedRectangleCompat(borderPen,new RectangleF(2f,2f,button.Width-5f,button.Height-5f),11f);
-            int reserved=line==null?0:line.Quantity;
-            int left=Math.Max(0,item.Stock-reserved);
-            int nameY=Math.Max(100,button.Height-82);
-            RectangleF nameBox=new RectangleF(10,nameY,button.Width-20,35);
-            using(Font nameFont=new Font("Segoe UI",8.7f,FontStyle.Bold))
-            using(SolidBrush nameBrush=new SolidBrush(Color.White))
-            using(StringFormat center=new StringFormat{Alignment=StringAlignment.Center,LineAlignment=StringAlignment.Center,Trimming=StringTrimming.EllipsisWord})
-                e.Graphics.DrawString(item.ItemName,nameFont,nameBrush,nameBox,center);
-            using(Font priceFont=new Font("Segoe UI",9f,FontStyle.Bold))
-            using(SolidBrush priceBrush=new SolidBrush(Color.FromArgb(251,146,60)))
-                e.Graphics.DrawString("₱"+item.Price.ToString("N2"),priceFont,priceBrush,10,button.Height-36);
-            Color stockColor=left<=item.ReorderLevel?Color.FromArgb(251,146,60):Color.FromArgb(190,178,170);
-            using(Font stockFont=new Font("Segoe UI",7.8f,FontStyle.Regular))
-            using(SolidBrush stockBrush=new SolidBrush(stockColor))
-            using(StringFormat right=new StringFormat{Alignment=StringAlignment.Far})
-                e.Graphics.DrawString(left+" left",stockFont,stockBrush,new RectangleF(button.Width-86,button.Height-33,74,20),right);
-            if(!selected) return;
-            int diameter=34; Rectangle badge=new Rectangle(button.ClientSize.Width-diameter-9,9,diameter,diameter);
-            using(SolidBrush fill=new SolidBrush(Color.FromArgb(249,115,22)))e.Graphics.FillEllipse(fill,badge);
-            using(Pen outline=new Pen(Color.FromArgb(255,205,170),1.3f))e.Graphics.DrawEllipse(outline,badge);
-            using(Font font=new Font("Segoe UI",9f,FontStyle.Bold))
-            using(SolidBrush textBrush=new SolidBrush(Color.White))
-            using(StringFormat format=new StringFormat{Alignment=StringAlignment.Center,LineAlignment=StringAlignment.Center})
-                e.Graphics.DrawString("×"+line.Quantity,font,textBrush,badge,format);
-        }
-
-        private void ApplyProductCardState(Button button, bool hovering)
-        {
-            int id;
-            if(button==null || !buttonItemIds.TryGetValue(button,out id)) return;
-            bool selected=cart.Any(x=>x.MenuItemID==id);
-            button.BackColor=selected
-                ? (hovering?Color.FromArgb(132,72,42):Color.FromArgb(112,63,38))
-                : (hovering?Color.FromArgb(68,53,44):Color.FromArgb(54,43,36));
-            button.Invalidate();
-        }
-
         // EVENT: dgvCart_CellContentClick - runs when the user interacts with this control.
 
         private void dgvCart_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -305,16 +248,6 @@ namespace MiniMartPOS
             lblSubtotal.Text = "Subtotal                                      ₱" + subtotal.ToString("N2");
             lblTax.Text = "Tax                                                ₱0.00";
             lblTotal.Text = "Total                                        ₱" + subtotal.ToString("N2");
-            foreach(KeyValuePair<Button,int> pair in buttonItemIds)
-            {
-                CartLine selectedLine=cart.FirstOrDefault(x=>x.MenuItemID==pair.Value);
-                bool selected=selectedLine!=null;
-                MenuItem item=DatabaseData.MenuItems.First(x=>x.MenuItemID==pair.Value);
-                int left=Math.Max(0,item.Stock-(selected?selectedLine.Quantity:0));
-                pair.Key.Text="";
-                pair.Key.BackColor=selected?Color.FromArgb(112,63,38):Color.FromArgb(54,43,36);
-                pair.Key.Invalidate();
-            }
             RefreshCategoryStyles();
         }
 
