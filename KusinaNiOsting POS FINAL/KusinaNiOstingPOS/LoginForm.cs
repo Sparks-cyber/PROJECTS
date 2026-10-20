@@ -23,20 +23,6 @@ namespace MiniMartPOS
             DesignLoginForm();
         }
 
-        private void panelBrand_Paint(object sender, PaintEventArgs e)
-        {
-            int fadeTop = (int)(panelBrand.ClientSize.Height * .50f);
-            Rectangle fadeArea = new Rectangle(0, fadeTop, panelBrand.ClientSize.Width,
-                panelBrand.ClientSize.Height - fadeTop);
-            using (LinearGradientBrush fade = new LinearGradientBrush(fadeArea,
-                Color.FromArgb(0, 7, 4, 2), Color.FromArgb(220, 7, 4, 2), 90f))
-                e.Graphics.FillRectangle(fade, fadeArea);
-
-            using (LinearGradientBrush edgeFade = new LinearGradientBrush(panelBrand.ClientRectangle,
-                Color.FromArgb(22, 5, 3, 2), Color.FromArgb(72, 5, 3, 2), 0f))
-                e.Graphics.FillRectangle(edgeFade, panelBrand.ClientRectangle);
-        }
-
         private void LoginForm_Load(object sender, EventArgs e)
         {
             // Center the login controls when the form opens.
@@ -135,6 +121,21 @@ namespace MiniMartPOS
             // Release the database connection when the form closes.
             db.Dispose();
             base.OnFormClosed(e);
+        }
+
+        private void panelBrand_Paint(object sender, PaintEventArgs e)
+        {
+            int fadeTop = (int)(panelBrand.ClientSize.Height * .50f);
+            Rectangle fadeArea = new Rectangle(0, fadeTop, panelBrand.ClientSize.Width,
+                panelBrand.ClientSize.Height - fadeTop);
+
+            using (LinearGradientBrush fade = new LinearGradientBrush(fadeArea,
+                Color.FromArgb(0, 7, 4, 2), Color.FromArgb(220, 7, 4, 2), 90f))
+                e.Graphics.FillRectangle(fade, fadeArea);
+
+            using (LinearGradientBrush edgeFade = new LinearGradientBrush(panelBrand.ClientRectangle,
+                Color.FromArgb(22, 5, 3, 2), Color.FromArgb(72, 5, 3, 2), 0f))
+                e.Graphics.FillRectangle(edgeFade, panelBrand.ClientRectangle);
         }
 
         private void DesignLoginForm()
