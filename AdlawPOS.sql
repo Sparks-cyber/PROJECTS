@@ -68,6 +68,37 @@ CREATE TABLE Products
 );
 GO
 
+-- Add the default products
+INSERT INTO Products
+    (ItemCode, ItemName, CategoryID, Price, Stock, ImagePath, IsDeleted)
+VALUES
+    ('PRD-1', 'Adlaw Latte', 1, 95.00, 20, 'ProductImages\COFFEE_Adlaw Latte.png', 0),
+    ('PRD-2', 'Americano', 1, 75.00, 20, 'ProductImages\COFFEE_americano.png', 0),
+    ('PRD-3', 'Biscoff Latte', 1, 110.00, 20, 'ProductImages\COFFEE_biscoff latte.png', 0),
+    ('PRD-4', 'Caramel Coffee', 1, 100.00, 20, 'ProductImages\COFFEE_caramel.png', 0),
+    ('PRD-5', 'Choco Chip Coffee', 1, 105.00, 20, 'ProductImages\COFFEE_choco chip.png', 0),
+    ('PRD-6', 'Cloud 9 Coffee', 1, 105.00, 20, 'ProductImages\COFFEE_cloud 9.png', 0),
+    ('PRD-7', 'Nutty Vanilla', 1, 105.00, 20, 'ProductImages\COFFEE_nutty vanilla.png', 0),
+    ('PRD-8', 'Salted Caramel', 1, 105.00, 20, 'ProductImages\COFFEE_salted caramel.png', 0),
+    ('PRD-9', 'Spanish Latte', 1, 100.00, 20, 'ProductImages\COFFEE_spanish.png', 0),
+    ('PRD-10', 'Spiced Caramel', 1, 105.00, 20, 'ProductImages\COFFEE_spiced caramel.png', 0),
+    ('PRD-11', 'White Mocha', 1, 105.00, 20, 'ProductImages\COFFEE_white mocha.png', 0),
+    ('PRD-12', 'Matcha Bean', 2, 110.00, 20, 'ProductImages\MATCHA_matcha bean.png', 0),
+    ('PRD-13', 'Matcha Berry', 2, 115.00, 20, 'ProductImages\MATCHA_matcha berry.png', 0),
+    ('PRD-14', 'Matcha Cloud', 2, 110.00, 20, 'ProductImages\MATCHA_matcha cloud.png', 0),
+    ('PRD-15', 'Matcha Milk', 2, 100.00, 20, 'ProductImages\MATCHA_matcha milk.png', 0),
+    ('PRD-16', 'Salted Matcha', 2, 110.00, 20, 'ProductImages\MATCHA_salted matcha.png', 0),
+    ('PRD-17', 'Berry Choco', 3, 105.00, 20, 'ProductImages\NON_COFFEE_berry choco.png', 0),
+    ('PRD-18', 'Biscoff Milk', 3, 105.00, 20, 'ProductImages\NON_COFFEE_biscoff milk.png', 0),
+    ('PRD-19', 'Blueberry Milk', 3, 100.00, 20, 'ProductImages\NON_COFFEE_blueberry.png', 0),
+    ('PRD-20', 'Dark Chocolate', 3, 105.00, 20, 'ProductImages\NON_COFFEE_dark chocolate.png', 0),
+    ('PRD-21', 'Strawberry Milk', 3, 100.00, 20, 'ProductImages\NON_COFFEE_strawberry.png', 0),
+    ('PRD-22', 'Ube Milk', 3, 100.00, 20, 'ProductImages\NON_COFFEE_ube.png', 0),
+    ('PRD-23', 'Green Refresher', 4, 85.00, 20, 'ProductImages\REFRESHER_GREEN.png', 0),
+    ('PRD-24', 'Pink Refresher', 4, 85.00, 20, 'ProductImages\REFRESHER_PINK.png', 0),
+    ('PRD-25', 'Purple Refresher', 4, 85.00, 20, 'ProductImages\REFRESHER_PURPLE.png', 0);
+GO
+
 -- Store completed sales
 CREATE TABLE Sales
 (
