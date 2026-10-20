@@ -19,24 +19,15 @@ namespace MiniMartPOS
         public OrderForm()
         {
             InitializeComponent();
-            UiStyle.RoundControl(panelProducts, 16); UiStyle.RoundControl(panelCart, 16); UiStyle.RoundControl(panelSummary, 16);
-            UiStyle.AddBorder(panelProducts, Color.FromArgb(73,56,46)); UiStyle.AddBorder(panelCart, Color.FromArgb(73,56,46)); UiStyle.AddBorder(panelSummary, Color.FromArgb(73,56,46));
-            UiStyle.RoundControl(btnPay, 10); UiStyle.AddHover(btnPay, Color.FromArgb(234,88,12), Color.FromArgb(245,158,11));
-            UiStyle.SetCueBanner(txtSearch, "Search menu item...");
-            cmbSort.Items.AddRange(new object[] { "Sort: Default", "Price: Low to High", "Price: High to Low" });
-            cmbSort.SelectedIndex = 0;
-            cmbSort.SelectedIndexChanged += delegate { LoadProductButtons(); };
-            dgvCart.ColumnHeadersDefaultCellStyle.SelectionBackColor = dgvCart.ColumnHeadersDefaultCellStyle.BackColor;
-            dgvCart.ColumnHeadersDefaultCellStyle.SelectionForeColor = dgvCart.ColumnHeadersDefaultCellStyle.ForeColor;
-            dgvCart.DefaultCellStyle.SelectionBackColor = dgvCart.DefaultCellStyle.BackColor;
-            dgvCart.DefaultCellStyle.SelectionForeColor = dgvCart.DefaultCellStyle.ForeColor;
-            colDecrease.DefaultCellStyle.BackColor = Color.FromArgb(76,44,30);
-            colDecrease.DefaultCellStyle.ForeColor = Color.White;
-            colDecrease.DefaultCellStyle.SelectionBackColor = Color.FromArgb(76,44,30);
-            colDecrease.DefaultCellStyle.SelectionForeColor = Color.White;
-
             InitializeProductCards();
-            ConfigureCategoryButton(btnCatAll, 0); ConfigureCategoryButton(btnCatNoodles, 1); ConfigureCategoryButton(btnCatMeals, 2); ConfigureCategoryButton(btnCatCanned, 3); ConfigureCategoryButton(btnCatDrinks, 4);
+            ConfigureCategoryButton(btnCatAll, 0);
+            ConfigureCategoryButton(btnCatNoodles, 1);
+            ConfigureCategoryButton(btnCatMeals, 2);
+            ConfigureCategoryButton(btnCatCanned, 3);
+            ConfigureCategoryButton(btnCatDrinks, 4);
+            DesignOrderForm();
+
+            cmbSort.SelectedIndexChanged += delegate { LoadProductButtons(); };
             txtSearch.TextChanged += delegate { LoadProductButtons(); };
             dgvCart.CellContentClick += dgvCart_CellContentClick;
             Resize += delegate { LayoutResponsivePanels(); };
@@ -65,12 +56,10 @@ namespace MiniMartPOS
 
         private void ConfigureProductCard(Button button)
         {
-            button.BackColor=Color.FromArgb(54,43,36); button.ForeColor=Color.White;
-            button.FlatStyle=FlatStyle.Flat; button.FlatAppearance.BorderSize=0;
-            button.Font=new Font("Segoe UI",9f,FontStyle.Bold); button.Cursor=Cursors.Hand;
-            button.UseVisualStyleBackColor=false; button.TabStop=false;
-            button.Click += ProductButton_Click; button.Paint += ProductButton_Paint;
-            Button captured=button;
+            button.Click += ProductButton_Click;
+            button.Paint += ProductButton_Paint;
+
+            Button captured = button;
             captured.MouseEnter += delegate { ApplyProductCardState(captured,true); };
             captured.MouseLeave += delegate { ApplyProductCardState(captured,false); };
         }
@@ -79,11 +68,7 @@ namespace MiniMartPOS
 
         private void ConfigureCategoryButton(Button button, int categoryId)
         {
-            button.Tag=categoryId; button.FlatStyle=FlatStyle.Flat; button.FlatAppearance.BorderSize=0;
-            button.UseVisualStyleBackColor=false; button.UseMnemonic=false; button.FlatAppearance.MouseDownBackColor=Color.FromArgb(194,65,12); button.FlatAppearance.MouseOverBackColor=Color.FromArgb(124,70,42);
-            button.BackColor=categoryId==0?Color.FromArgb(234,88,12):Color.FromArgb(54,43,36);
-            button.ForeColor=Color.White; button.Font=new Font("Segoe UI",8.5f,FontStyle.Bold);
-            button.Cursor=Cursors.Hand; button.Margin=new Padding(0,0,8,0); UiStyle.RoundControl(button,8);
+            button.Tag = categoryId;
             button.MouseEnter += delegate { button.BackColor=(int)button.Tag==selectedCategoryId?Color.FromArgb(234,88,12):Color.FromArgb(83,58,45); };
             button.MouseLeave += delegate { RefreshCategoryStyles(); };
             button.Click += CategoryButton_Click;
@@ -397,6 +382,51 @@ namespace MiniMartPOS
                     txtSearch.Clear();
                     RefreshCart();
                     LoadProductButtons();
+            }
+        }
+
+        private void DesignOrderForm()
+        {
+            UiStyle.RoundControl(panelProducts, 16);
+            UiStyle.RoundControl(panelCart, 16);
+            UiStyle.RoundControl(panelSummary, 16);
+            UiStyle.AddBorder(panelProducts, Color.FromArgb(73, 56, 46));
+            UiStyle.AddBorder(panelCart, Color.FromArgb(73, 56, 46));
+            UiStyle.AddBorder(panelSummary, Color.FromArgb(73, 56, 46));
+            UiStyle.RoundControl(btnPay, 10);
+            UiStyle.AddHover(btnPay, Color.FromArgb(234, 88, 12),
+                Color.FromArgb(245, 158, 11));
+            UiStyle.SetCueBanner(txtSearch, "Search menu item...");
+
+            foreach (Button button in productButtons)
+            {
+                button.BackColor = Color.FromArgb(54, 43, 36);
+                button.ForeColor = Color.White;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                button.Cursor = Cursors.Hand;
+                button.UseVisualStyleBackColor = false;
+                button.TabStop = false;
+            }
+
+            foreach (Button button in panelCategories.Controls.OfType<Button>())
+            {
+                int categoryID = Convert.ToInt32(button.Tag);
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.UseVisualStyleBackColor = false;
+                button.UseMnemonic = false;
+                button.FlatAppearance.MouseDownBackColor = Color.FromArgb(194, 65, 12);
+                button.FlatAppearance.MouseOverBackColor = Color.FromArgb(124, 70, 42);
+                button.BackColor = categoryID == 0
+                    ? Color.FromArgb(234, 88, 12)
+                    : Color.FromArgb(54, 43, 36);
+                button.ForeColor = Color.White;
+                button.Font = new Font("Segoe UI", 8.5F, FontStyle.Bold);
+                button.Cursor = Cursors.Hand;
+                button.Margin = new Padding(0, 0, 8, 0);
+                UiStyle.RoundControl(button, 8);
             }
         }
     }
