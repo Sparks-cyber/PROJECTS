@@ -60,14 +60,20 @@ namespace GROUP_PROJECT
                 }
             }
 
-            gridInventory.DataSource = inventory;
             cboProduct.DataSource = inventory.ToList();
-            gridInventory.Columns["ProductID"].Visible = false;
-            gridInventory.Columns["DisplayName"].Visible = false;
-            gridInventory.Columns["ImagePath"].Visible = false;
-            gridInventory.Columns["ItemCode"].HeaderText = "ITEM CODE";
-            gridInventory.Columns["ItemName"].HeaderText = "ITEM NAME";
-            gridInventory.Columns["Stock"].HeaderText = "AVAILABLE STOCK";
+            gridInventory.Rows.Clear();
+
+            // Display every inventory item with its product image.
+            foreach (InventoryResult product in inventory)
+            {
+                gridInventory.Rows.Add(
+                    LoadProductImage(product),
+                    product.ItemCode,
+                    product.ItemName,
+                    product.Stock,
+                    product.ProductID
+                );
+            }
 
             int lowStockCount = 0;
             foreach (InventoryResult product in inventory)
@@ -83,9 +89,6 @@ namespace GROUP_PROJECT
 
             foreach (DataGridViewRow row in gridInventory.Rows)
             {
-                InventoryResult product = row.DataBoundItem as InventoryResult;
-                row.Cells["ProductImage"].Value = LoadProductImage(product);
-
                 if (Convert.ToInt32(row.Cells["Stock"].Value) <= 5)
                 {
                     row.DefaultCellStyle.BackColor = System.Drawing.Color.MistyRose;
@@ -98,14 +101,42 @@ namespace GROUP_PROJECT
 
         private void SetupImageColumn()
         {
-            // Add one image column before the inventory information.
+            // Create fixed columns so images display correctly in every row.
+            gridInventory.AutoGenerateColumns = false;
+
             DataGridViewImageColumn imageColumn = new DataGridViewImageColumn();
             imageColumn.Name = "ProductImage";
             imageColumn.HeaderText = "IMAGE";
             imageColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
             imageColumn.FillWeight = 55;
             imageColumn.DefaultCellStyle.NullValue = null;
+
+            DataGridViewTextBoxColumn codeColumn = new DataGridViewTextBoxColumn();
+            codeColumn.Name = "ItemCode";
+            codeColumn.HeaderText = "ITEM CODE";
+            codeColumn.FillWeight = 85;
+
+            DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
+            nameColumn.Name = "ItemName";
+            nameColumn.HeaderText = "ITEM NAME";
+            nameColumn.FillWeight = 150;
+
+            DataGridViewTextBoxColumn stockColumn = new DataGridViewTextBoxColumn();
+            stockColumn.Name = "Stock";
+            stockColumn.HeaderText = "AVAILABLE STOCK";
+            stockColumn.FillWeight = 80;
+            stockColumn.DefaultCellStyle.Alignment =
+                DataGridViewContentAlignment.MiddleCenter;
+
+            DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
+            idColumn.Name = "ProductID";
+            idColumn.Visible = false;
+
             gridInventory.Columns.Add(imageColumn);
+            gridInventory.Columns.Add(codeColumn);
+            gridInventory.Columns.Add(nameColumn);
+            gridInventory.Columns.Add(stockColumn);
+            gridInventory.Columns.Add(idColumn);
             gridInventory.RowTemplate.Height = 60;
         }
 
