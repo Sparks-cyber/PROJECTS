@@ -9,8 +9,6 @@ namespace MiniMartPOS
         public ReportsForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
-            UiStyle.PolishForm(this);
             Panel[] cards = { panelDaily, panelWeekly, panelMonthly, panelTopProducts };
             foreach (Panel p in cards) { UiStyle.RoundControl(p,16); UiStyle.AddBorder(p,Color.FromArgb(73,56,46)); }
             LoadReport();

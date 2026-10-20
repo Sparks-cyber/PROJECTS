@@ -15,8 +15,6 @@ namespace MiniMartPOS
         {
             total = amount;
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
-            UiStyle.PolishForm(this);
             UiStyle.RoundControl(btnConfirm, 10); UiStyle.RoundControl(btnCancel, 10);
             lblTotalValue.Text = "₱" + total.ToString("N2");
             cmbMethod.SelectedIndex = 0; numAmount.Value = total; UpdateChange();

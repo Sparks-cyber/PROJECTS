@@ -11,8 +11,6 @@ namespace MiniMartPOS
         public HomeForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
-            UiStyle.PolishForm(this);
             ConfigureRoundedCards();
             cmbPeriod.SelectedIndex = 0;
             cmbPeriod.SelectedIndexChanged += cmbPeriod_SelectedIndexChanged;

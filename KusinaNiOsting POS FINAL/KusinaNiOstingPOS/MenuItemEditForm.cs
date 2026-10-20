@@ -21,10 +21,6 @@ namespace MiniMartPOS
             itemID = id;
             InitializeComponent();
 
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
-                return;
-
-            UiStyle.PolishForm(this);
             UiStyle.RoundControl(btnBrowseImage, 9);
             UiStyle.RoundControl(btnSave, 9);
             UiStyle.RoundControl(btnCancel, 9);

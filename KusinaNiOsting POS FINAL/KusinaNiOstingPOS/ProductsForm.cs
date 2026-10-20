@@ -14,7 +14,6 @@ namespace MiniMartPOS
         public ProductsForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
 
             UiStyle.RoundControl(panelToolbar, 14);
             UiStyle.AddBorder(panelToolbar, Color.FromArgb(73, 56, 46));
@@ -23,7 +22,6 @@ namespace MiniMartPOS
             UiStyle.RoundControl(btnDelete, 10);
             UiStyle.AddHover(btnPrimary, Color.FromArgb(234, 88, 12), Color.FromArgb(245, 158, 11));
             UiStyle.SetCueBanner(txtSearch, "Search menu items...");
-            UiStyle.PolishForm(this);
             cmbSort=UiStyle.AddToolbarSort(panelToolbar,txtSearch,"Sort: Name A–Z","Name Z–A","Price: Low to High","Price: High to Low","Stock: Low to High","Stock: High to Low","Status: Available First","Status: Unavailable First");
             cmbSort.SelectedIndexChanged+=delegate{LoadData();};
 

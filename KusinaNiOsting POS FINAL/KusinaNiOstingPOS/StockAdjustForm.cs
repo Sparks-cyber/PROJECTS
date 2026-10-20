@@ -1,1 +1,60 @@
-﻿using System;using System.Linq;using System.Windows.Forms;namespace MiniMartPOS{public partial class StockAdjustForm:Form{private readonly int itemID;public StockAdjustForm():this(0){}public StockAdjustForm(int id){itemID=id;InitializeComponent();if(System.ComponentModel.LicenseManager.UsageMode==System.ComponentModel.LicenseUsageMode.Designtime)return;UiStyle.PolishForm(this);LoadItem();}private void LoadItem(){MenuItem m=DatabaseData.MenuItems.First(x=>x.MenuItemID==itemID);lblItem.Text=m.ItemName;lblCurrent.Text="Current Stock: "+m.Stock;}private void btnSave_Click(object sender,EventArgs e){int change=(int)numChange.Value;if(change==0){UiDialogs.Warning(this,"Adjust Stock","Enter a quantity change.");return;}MenuItem m=DatabaseData.MenuItems.First(x=>x.MenuItemID==itemID);int old=m.Stock;int next=old+change;if(next<0){UiDialogs.Warning(this,"Adjust Stock","Stock cannot be negative.");return;}DatabaseData.AdjustStock(itemID,change,txtReason.Text.Trim()==""?"Manual adjustment":txtReason.Text.Trim(),Session.CurrentUserID==0?(int?)null:Session.CurrentUserID);DialogResult=DialogResult.OK;Close();}}}
+using System;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace MiniMartPOS
+{
+    public partial class StockAdjustForm : Form
+    {
+        private readonly int itemID;
+
+        public StockAdjustForm() : this(0) { }
+
+        public StockAdjustForm(int id)
+        {
+            itemID = id;
+            InitializeComponent();
+            LoadItem();
+        }
+
+        private void LoadItem()
+        {
+            MenuItem item = DatabaseData.MenuItems.First(x => x.MenuItemID == itemID);
+            lblItem.Text = item.ItemName;
+            lblCurrent.Text = "Current Stock: " + item.Stock;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            // Validate and save the stock adjustment.
+            int change = Convert.ToInt32(numChange.Value);
+
+            if (change == 0)
+            {
+                UiDialogs.Warning(this, "Adjust Stock", "Enter a quantity change.");
+                return;
+            }
+
+            MenuItem item = DatabaseData.MenuItems.First(x => x.MenuItemID == itemID);
+            int newStock = item.Stock + change;
+
+            if (newStock < 0)
+            {
+                UiDialogs.Warning(this, "Adjust Stock", "Stock cannot be negative.");
+                return;
+            }
+
+            string reason = txtReason.Text.Trim();
+            if (reason == "")
+                reason = "Manual adjustment";
+
+            int? userID = null;
+            if (Session.CurrentUserID > 0)
+                userID = Session.CurrentUserID;
+
+            DatabaseData.AdjustStock(itemID, change, reason, userID);
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+    }
+}

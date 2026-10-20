@@ -19,12 +19,10 @@ namespace MiniMartPOS
         public OrderForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
             UiStyle.RoundControl(panelProducts, 16); UiStyle.RoundControl(panelCart, 16); UiStyle.RoundControl(panelSummary, 16);
             UiStyle.AddBorder(panelProducts, Color.FromArgb(73,56,46)); UiStyle.AddBorder(panelCart, Color.FromArgb(73,56,46)); UiStyle.AddBorder(panelSummary, Color.FromArgb(73,56,46));
             UiStyle.RoundControl(btnPay, 10); UiStyle.AddHover(btnPay, Color.FromArgb(234,88,12), Color.FromArgb(245,158,11));
             UiStyle.SetCueBanner(txtSearch, "Search menu item...");
-            UiStyle.PolishForm(this);
             cmbSort.Items.AddRange(new object[] { "Sort: Default", "Price: Low to High", "Price: High to Low" });
             cmbSort.SelectedIndex = 0;
             cmbSort.SelectedIndexChanged += delegate { LoadProductButtons(); };

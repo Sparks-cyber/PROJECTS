@@ -14,8 +14,6 @@ namespace MiniMartPOS
         {
             sale = completedSale;
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
-            UiStyle.PolishForm(this);
             UiStyle.RoundControl(panelReceipt, 14);
             UiStyle.AddBorder(panelReceipt, Color.FromArgb(73, 56, 46));
             UiStyle.RoundControl(btnDone, 9);

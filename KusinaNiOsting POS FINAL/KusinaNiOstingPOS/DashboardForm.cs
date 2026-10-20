@@ -21,8 +21,6 @@ namespace MiniMartPOS
             this.displayName = string.IsNullOrWhiteSpace(displayName) ?
                 AppConstants.DefaultAdminName : displayName;
             InitializeComponent();
-            UiStyle.PolishForm(this);
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
             DoubleBuffered = true;
             // KEEP ALL SIDEBAR BUTTONS VISIBLE.
             ConfigureNavigation();

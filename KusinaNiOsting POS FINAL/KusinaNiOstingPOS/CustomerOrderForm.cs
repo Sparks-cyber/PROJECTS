@@ -12,7 +12,6 @@ namespace MiniMartPOS
         public CustomerOrderForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
 
             UiStyle.RoundControl(btnBack, 10);
             UiStyle.AddHover(btnBack, btnBack.BackColor, Color.FromArgb(76, 58, 47));

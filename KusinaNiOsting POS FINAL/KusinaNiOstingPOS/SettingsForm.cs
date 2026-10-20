@@ -10,8 +10,6 @@ namespace MiniMartPOS
         public SettingsForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
-            UiStyle.PolishForm(this);
             UiStyle.RoundControl(panelStore, 16); UiStyle.RoundControl(panelPreferences, 16);
             UiStyle.AddBorder(panelStore, Color.FromArgb(73,56,46)); UiStyle.AddBorder(panelPreferences, Color.FromArgb(73,56,46));
             UiStyle.RoundControl(btnSave, 10); UiStyle.AddHover(btnSave, Color.FromArgb(234,88,12), Color.FromArgb(245,158,11));

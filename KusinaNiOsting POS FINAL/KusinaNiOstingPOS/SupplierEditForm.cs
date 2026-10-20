@@ -17,10 +17,6 @@ namespace MiniMartPOS
             supplierID = id;
             InitializeComponent();
 
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime)
-                return;
-
-            UiStyle.PolishForm(this);
 
             if (supplierID > 0)
                 LoadSupplier();

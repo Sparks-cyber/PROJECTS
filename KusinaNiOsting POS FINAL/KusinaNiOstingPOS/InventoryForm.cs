@@ -13,8 +13,6 @@ namespace MiniMartPOS
         public InventoryForm()
         {
             InitializeComponent();
-            if (System.ComponentModel.LicenseManager.UsageMode == System.ComponentModel.LicenseUsageMode.Designtime) return;
-            UiStyle.PolishForm(this);
             UiStyle.RoundControl(panelToolbar, 14);
             UiStyle.AddBorder(panelToolbar, Color.FromArgb(73, 56, 46));
             UiStyle.RoundControl(btnPrimary, 10);
