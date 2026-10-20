@@ -1,0 +1,109 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Database xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007" Class="KusinaDataClassesDataContext" Name="KusinaNiOstingDB">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=.;Initial Catalog=KusinaNiOstingDB;Integrated Security=True;TrustServerCertificate=True" SettingsObjectName="MiniMartPOS.Properties.Settings" SettingsPropertyName="KusinaNiOstingDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Users" Member="Users"><Type Name="User">
+    <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="FullName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    <Column Name="Username" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+    <Column Name="Password" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    <Column Name="Role" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+    <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    <Column Name="CreatedAt" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Table Name="dbo.Categories" Member="Categories"><Type Name="Category">
+    <Column Name="CategoryID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="CategoryName" Type="System.String" DbType="NVarChar(60) NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Table Name="dbo.Suppliers" Member="Suppliers"><Type Name="Supplier">
+    <Column Name="SupplierID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="SupplierCode" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+    <Column Name="SupplierName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    <Column Name="ContactNo" Type="System.String" DbType="NVarChar(30)" CanBeNull="true" />
+    <Column Name="Supplies" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+    <Column Name="LastDeliveryDate" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+    <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Table Name="dbo.MenuItems" Member="MenuItems"><Type Name="MenuItem">
+    <Column Name="MenuItemID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="ItemCode" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+    <Column Name="ItemName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    <Column Name="CategoryID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="SupplierID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    <Column Name="Price" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+    <Column Name="Stock" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="ReorderLevel" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="IsActive" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+  </Type></Table>
+
+  <Table Name="dbo.ProductImages" Member="ProductImages"><Type Name="ProductImage">
+    <Column Name="ProductImageID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="MenuItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="ImagePath" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+    <Column Name="IsPrimary" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Table Name="dbo.Sales" Member="Sales"><Type Name="Sale">
+    <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="TransactionNo" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+    <Column Name="SaleDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="PaymentMethod" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+    <Column Name="Subtotal" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+    <Column Name="TotalAmount" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+    <Column Name="CashReceived" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+    <Column Name="ChangeAmount" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Table Name="dbo.SaleItems" Member="SaleItems"><Type Name="SaleItem">
+    <Column Name="SaleItemID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="MenuItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="UnitPrice" Type="System.Decimal" DbType="Decimal(10,2) NOT NULL" CanBeNull="false" />
+    <Column Name="Subtotal" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Table Name="dbo.InventoryLogs" Member="InventoryLogs"><Type Name="InventoryLog">
+    <Column Name="InventoryLogID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="MenuItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="QuantityChange" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="PreviousStock" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="NewStock" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    <Column Name="Reason" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    <Column Name="LogDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    <Column Name="UserID" Type="System.Int32" DbType="Int" CanBeNull="true" />
+  </Type></Table>
+  <Table Name="dbo.StoreSettings" Member="StoreSettings"><Type Name="StoreSetting">
+    <Column Name="SettingID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    <Column Name="StoreName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    <Column Name="ReceiptFooter" Type="System.String" DbType="NVarChar(200)" CanBeNull="true" />
+    <Column Name="PrintReceipt" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    <Column Name="LowStockAlerts" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+    <Column Name="SoundEffects" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+  </Type></Table>
+  <Function Name="dbo.GetLowStockItems" Method="GetLowStockItems">
+    <ElementType Name="GetLowStockItemsResult">
+      <Column Name="MenuItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ItemCode" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="ItemName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Stock" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ReorderLevel" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.GetRecentTransactions" Method="GetRecentTransactions">
+    <ElementType Name="GetRecentTransactionsResult">
+      <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TransactionNo" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="SaleDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TotalAmount" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PaymentMethod" Type="System.String" DbType="NVarChar(30) NOT NULL" CanBeNull="false" />
+      <Column Name="Cashier" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+
+  <Function Name="dbo.SetProductStatus" Method="SetProductStatus">
+    <Parameter Name="MenuItemID" Parameter="menuItemID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="IsActive" Parameter="isActive" Type="System.Boolean" DbType="Bit" />
+  </Function>
+  <Function Name="dbo.HardDeleteMenuItem" Method="HardDeleteMenuItem">
+    <Parameter Name="MenuItemID" Parameter="menuItemID" Type="System.Int32" DbType="Int" />
+  </Function>
+
+<Function Name="dbo.SP_LoadInventory" Method="SP_LoadInventory"><Parameter Name="Search" Parameter="search" Type="System.String" DbType="VarChar(100)" /><Parameter Name="Sort" Parameter="sort" Type="System.Int32" DbType="Int" /><ElementType Name="SP_LoadInventoryResult"><Column Name="MenuItemID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" /><Column Name="ItemName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" /><Column Name="Stock" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" /><Column Name="ReorderLevel" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" /><Column Name="SupplierName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" /><Column Name="StockStatus" Type="System.String" DbType="VarChar(10) NOT NULL" CanBeNull="false" /></ElementType></Function><Function Name="dbo.SP_LoadSales" Method="SP_LoadSales"><Parameter Name="Search" Parameter="search" Type="System.String" DbType="VarChar(100)" /><Parameter Name="Sort" Parameter="sort" Type="System.Int32" DbType="Int" /><ElementType Name="SP_LoadSalesResult"><Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" /><Column Name="TransactionNo" Type="System.String" DbType="VarChar(30) NOT NULL" CanBeNull="false" /><Column Name="SaleDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" /><Column Name="TotalAmount" Type="System.Decimal" DbType="Decimal(12,2) NOT NULL" CanBeNull="false" /><Column Name="PaymentMethod" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" /><Column Name="Cashier" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" /><Column Name="ItemCount" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" /></ElementType></Function></Database>
