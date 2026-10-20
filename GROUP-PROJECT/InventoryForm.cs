@@ -1,20 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GROUP_PROJECT
 {
     public partial class InventoryForm : Form
     {
-        public InventoryForm()
+        private readonly AdlawDataContext db = new AdlawDataContext();
+
+        public InventoryForm() { InitializeComponent(); }
+
+        private void InventoryForm_Load(object sender, EventArgs e)
         {
-            InitializeComponent();
+            try { RefreshInventory(); }
+            catch (Exception ex) { ShowError("Unable to load Inventory.", ex); }
+        }
+
+        private void RefreshInventory()
+        {
+            List<InventoryResult> inventory = db.Adlaw_RetrieveInventory().ToList();
+            gridInventory.DataSource = inventory;
+            cboProduct.DataSource = inventory.ToList();
+            gridInventory.Columns["ProductID"].Visible = false;
+            gridInventory.Columns["DisplayName"].Visible = false;
+            gridInventory.Columns["ItemCode"].HeaderText = "ITEM CODE";
+            gridInventory.Columns["ItemName"].HeaderText = "ITEM NAME";
+            gridInventory.Columns["Stock"].HeaderText = "AVAILABLE STOCK";
+            lblSummary.Text = inventory.Count + " product(s)   •   " +
+                inventory.Count(product => product.Stock <= 5) + " low stock";
+            foreach (DataGridViewRow row in gridInventory.Rows)
+                if (Convert.ToInt32(row.Cells["Stock"].Value) <= 5)
+                    row.DefaultCellStyle.BackColor = System.Drawing.Color.MistyRose;
+            gridInventory.ClearSelection();
+            ProductChanged(null, EventArgs.Empty);
+        }
+
+        private void ProductChanged(object sender, EventArgs e)
+        {
+            InventoryResult product = cboProduct.SelectedItem as InventoryResult;
+            lblProductDetails.Text = product == null
+                ? "No product available."
+                : "Current stock: " + product.Stock;
+        }
+
+        private void RestockProduct(object sender, EventArgs e)
+        {
+            InventoryResult product = cboProduct.SelectedItem as InventoryResult;
+            if (product == null)
+            {
+                MessageBox.Show("Select a product to restock.", "Adlaw POS",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                int updated = db.Adlaw_RestockProduct(
+                    product.ProductID, (int)numQuantity.Value);
+                MessageBox.Show(updated == 0
+                        ? "The product is no longer available."
+                        : "Stock updated successfully.",
+                    "Adlaw POS", MessageBoxButtons.OK,
+                    updated == 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+                numQuantity.Value = 1;
+                RefreshInventory();
+            }
+            catch (SqlException ex) { ShowError("Unable to restock.", ex); }
+        }
+
+        private static void ShowError(string title, Exception ex)
+        {
+            MessageBox.Show(title + "\n\n" + ex.Message, "Adlaw POS",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
