@@ -8,7 +8,7 @@
   <Function Name="Adlaw_Authenticate" Method="Adlaw_Authenticate">
     <Parameter Name="Username" Parameter="username" Type="System.String" DbType="VarChar(50)" />
     <Parameter Name="PasswordHash" Parameter="passwordHash" Type="System.String" DbType="Char(64)" />
-    <ElementType Name="AuthenticateResult">
+    <ElementType Name="UserAccount">
       <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Username" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="DisplayName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />

@@ -8,7 +8,7 @@ namespace GROUP_PROJECT
     {
         private readonly AdlawDataContext db = new AdlawDataContext();
 
-        public AuthenticationResult LoggedInUser { get; private set; }
+        public UserAccount LoggedInUser { get; private set; }
 
         public LoginForm()
         {
@@ -63,7 +63,7 @@ namespace GROUP_PROJECT
             {
                 string passwordHash = PasswordSecurity.GetHashSha256(password);
 
-                AuthenticationResult user = db.Adlaw_Authenticate(
+                UserAccount user = db.Adlaw_Authenticate(
                     username, passwordHash).FirstOrDefault();
 
                 if (user == null)
