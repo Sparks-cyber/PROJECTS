@@ -52,7 +52,7 @@ namespace GROUP_PROJECT
         private void Products_FormClosed(object sender, FormClosedEventArgs e)
         {
             txtPassword.Clear();
-            this.Show();
+            this.Close();
         }
     }
 }

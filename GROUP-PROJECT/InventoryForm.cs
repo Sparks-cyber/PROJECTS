@@ -46,9 +46,10 @@ namespace GROUP_PROJECT
         private void ProductChanged(object sender, EventArgs e)
         {
             InventoryResult product = cboProduct.SelectedItem as InventoryResult;
-            lblProductDetails.Text = product == null
-                ? "No product available."
-                : "Current stock: " + product.Stock;
+            if (product == null)
+                lblProductDetails.Text = "No product available.";
+            else
+                lblProductDetails.Text = "Current stock: " + product.Stock;
         }
 
         private void RestockProduct(object sender, EventArgs e)
@@ -65,11 +66,12 @@ namespace GROUP_PROJECT
             {
                 int updated = db.Adlaw_RestockProduct(
                     product.ProductID, (int)numQuantity.Value);
-                MessageBox.Show(updated == 0
-                        ? "The product is no longer available."
-                        : "Stock updated successfully.",
-                    "Adlaw POS", MessageBoxButtons.OK,
-                    updated == 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+                if (updated == 0)
+                    MessageBox.Show("The product is no longer available.",
+                        "Adlaw POS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                else
+                    MessageBox.Show("Stock updated successfully.", "Adlaw POS",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 numQuantity.Value = 1;
                 RefreshInventory();
             }

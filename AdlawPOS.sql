@@ -282,6 +282,65 @@ BEGIN
 END;
 GO
 
+-- Create one sale header for a customer cart
+CREATE PROCEDURE Adlaw_CreateSaleHeader
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO Sales (TotalAmount)
+    VALUES (0);
+
+    RETURN CONVERT(int, SCOPE_IDENTITY());
+END;
+GO
+
+-- Add one cart item and reduce its product stock
+CREATE PROCEDURE Adlaw_AddSaleItem
+    @SaleID int,
+    @ProductID int,
+    @Quantity int
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @SoldProduct TABLE
+    (
+        ProductID int,
+        ItemCode nvarchar(50),
+        ItemName nvarchar(150),
+        UnitPrice decimal(18, 2)
+    );
+
+    UPDATE Products
+    SET Stock = Stock - @Quantity
+    OUTPUT inserted.ProductID, inserted.ItemCode,
+           inserted.ItemName, inserted.Price
+        INTO @SoldProduct
+    WHERE ProductID = @ProductID
+      AND IsDeleted = 0
+      AND @Quantity > 0
+      AND Stock >= @Quantity;
+
+    INSERT INTO SaleItems
+        (SaleID, ProductID, ItemCode, ItemName,
+         Quantity, UnitPrice, Subtotal)
+    SELECT @SaleID, ProductID, ItemCode, ItemName,
+           @Quantity, UnitPrice, UnitPrice * @Quantity
+    FROM @SoldProduct;
+
+    UPDATE Sales
+    SET TotalAmount = TotalAmount +
+        COALESCE((SELECT UnitPrice * @Quantity FROM @SoldProduct), 0)
+    WHERE SaleID = @SaleID;
+
+    DECLARE @AddedItemCount int;
+    SELECT @AddedItemCount = COUNT(*) FROM @SoldProduct;
+
+    RETURN @AddedItemCount;
+END;
+GO
+
 -- Retrieve the sales history
 CREATE PROCEDURE Adlaw_RetrieveSales
 AS

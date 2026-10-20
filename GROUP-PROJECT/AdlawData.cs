@@ -162,6 +162,27 @@ namespace GROUP_PROJECT
             ).ReturnValue;
         }
 
+        [Function(Name = "Adlaw_CreateSaleHeader")]
+        public int Adlaw_CreateSaleHeader()
+        {
+            return (int)ExecuteMethodCall(
+                this,
+                (MethodInfo)MethodInfo.GetCurrentMethod()
+            ).ReturnValue;
+        }
+
+        [Function(Name = "Adlaw_AddSaleItem")]
+        public int Adlaw_AddSaleItem(int saleID, int productID, int quantity)
+        {
+            return (int)ExecuteMethodCall(
+                this,
+                (MethodInfo)MethodInfo.GetCurrentMethod(),
+                saleID,
+                productID,
+                quantity
+            ).ReturnValue;
+        }
+
         [Function(Name = "Adlaw_RetrieveSales")]
         public ISingleResult<SaleResult> Adlaw_RetrieveSales()
         {

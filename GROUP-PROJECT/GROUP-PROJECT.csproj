@@ -40,6 +40,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -66,6 +67,21 @@
     </Compile>
     <Compile Include="InventoryForm.Designer.cs">
       <DependentUpon>InventoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LandingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LandingForm.Designer.cs">
+      <DependentUpon>LandingForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerOrderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CustomerOrderForm.Designer.cs">
+      <DependentUpon>CustomerOrderForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReceiptForm.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Products.cs">
       <SubType>Form</SubType>

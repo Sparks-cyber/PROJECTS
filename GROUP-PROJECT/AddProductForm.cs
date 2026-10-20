@@ -11,9 +11,10 @@ namespace GROUP_PROJECT
         {
             get
             {
-                return editingProduct
-                    ? txtItemCode.Text.Trim()
-                    : null;
+                if (editingProduct)
+                    return txtItemCode.Text.Trim();
+                else
+                    return null;
             }
         }
 

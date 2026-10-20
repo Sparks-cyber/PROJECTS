@@ -46,9 +46,11 @@ namespace GROUP_PROJECT
         private void ProductChanged(object sender, EventArgs e)
         {
             ProductResult product = cboProduct.SelectedItem as ProductResult;
-            lblDetails.Text = product == null ? "No product available."
-                : "Price: ₱" + product.Price.ToString("N2") +
-                  "   •   Available stock: " + product.Stock;
+            if (product == null)
+                lblDetails.Text = "No product available.";
+            else
+                lblDetails.Text = "Price: ₱" + product.Price.ToString("N2") +
+                    "   •   Available stock: " + product.Stock;
         }
 
         private void CompleteSale(object sender, EventArgs e)
@@ -65,11 +67,12 @@ namespace GROUP_PROJECT
             try
             {
                 int saleID = db.Adlaw_CreateSale(product.ProductID, quantity);
-                MessageBox.Show(saleID == 0
-                        ? "Product is unavailable or has insufficient stock."
-                        : "Sale completed successfully.",
-                    "Adlaw POS", MessageBoxButtons.OK,
-                    saleID == 0 ? MessageBoxIcon.Warning : MessageBoxIcon.Information);
+                if (saleID == 0)
+                    MessageBox.Show("Product is unavailable or has insufficient stock.",
+                        "Adlaw POS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                else
+                    MessageBox.Show("Sale completed successfully.", "Adlaw POS",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 numQuantity.Value = 1;
                 RefreshData();
             }

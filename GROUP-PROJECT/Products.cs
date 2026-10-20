@@ -127,15 +127,17 @@ namespace GROUP_PROJECT
         private void ShowDeletedProducts(object sender, EventArgs e)
         {
             showingDeletedProducts = !showingDeletedProducts;
-            button5.Text = showingDeletedProducts
-                ? "ACTIVE PRODUCTS"
-                : "DELETED PRODUCTS";
+            if (showingDeletedProducts)
+                button5.Text = "ACTIVE PRODUCTS";
+            else
+                button5.Text = "DELETED PRODUCTS";
             btnadd.Enabled = !showingDeletedProducts;
             textBox1.Enabled = !showingDeletedProducts;
 
-            DisplayProducts(showingDeletedProducts
-                ? db.Adlaw_RetrieveDeletedProducts().ToList()
-                : db.Adlaw_RetrieveProducts().ToList());
+            if (showingDeletedProducts)
+                DisplayProducts(db.Adlaw_RetrieveDeletedProducts().ToList());
+            else
+                DisplayProducts(db.Adlaw_RetrieveProducts().ToList());
 
             UpdateActionHeaders();
         }
@@ -367,13 +369,16 @@ namespace GROUP_PROJECT
             {
                 Image productImage = null;
 
-                string filePath =
-                    Path.IsPathRooted(product.ImagePath)
-                        ? product.ImagePath
-                        : Path.Combine(
-                            Application.StartupPath,
-                            product.ImagePath ?? ""
-                        );
+                string filePath;
+                if (Path.IsPathRooted(product.ImagePath))
+                    filePath = product.ImagePath;
+                else
+                {
+                    string imagePath = product.ImagePath;
+                    if (imagePath == null)
+                        imagePath = "";
+                    filePath = Path.Combine(Application.StartupPath, imagePath);
+                }
 
                 if (File.Exists(filePath))
                 {
@@ -430,10 +435,20 @@ namespace GROUP_PROJECT
             DataGridViewButtonColumn secondAction =
                 (DataGridViewButtonColumn)grid.Columns["DeleteAction"];
 
-            firstAction.HeaderText = showingDeletedProducts ? "RESTORE" : "EDIT";
-            firstAction.Text = showingDeletedProducts ? "RESTORE" : "EDIT";
-            secondAction.HeaderText = showingDeletedProducts ? "PERMANENT" : "DELETE";
-            secondAction.Text = showingDeletedProducts ? "HARD DELETE" : "SOFT DELETE";
+            if (showingDeletedProducts)
+            {
+                firstAction.HeaderText = "RESTORE";
+                firstAction.Text = "RESTORE";
+                secondAction.HeaderText = "PERMANENT";
+                secondAction.Text = "HARD DELETE";
+            }
+            else
+            {
+                firstAction.HeaderText = "EDIT";
+                firstAction.Text = "EDIT";
+                secondAction.HeaderText = "DELETE";
+                secondAction.Text = "SOFT DELETE";
+            }
         }
 
         private void Grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -500,9 +515,11 @@ namespace GROUP_PROJECT
 
         private void DeleteProduct(int productID, bool hardDelete)
         {
-            string message = hardDelete
-                ? "Permanently delete this product? This cannot be undone."
-                : "Move this product to deleted products?";
+            string message;
+            if (hardDelete)
+                message = "Permanently delete this product? This cannot be undone.";
+            else
+                message = "Move this product to deleted products?";
 
             if (MessageBox.Show(message, "Adlaw POS", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning) != DialogResult.Yes)

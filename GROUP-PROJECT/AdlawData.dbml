@@ -94,6 +94,18 @@
   </Function>
 
   <!-- Retrieve sales history -->
+  <Function Name="Adlaw_CreateSaleHeader" Method="Adlaw_CreateSaleHeader">
+    <Return Type="System.Int32" />
+  </Function>
+
+  <Function Name="Adlaw_AddSaleItem" Method="Adlaw_AddSaleItem">
+    <Parameter Name="SaleID" Parameter="saleID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="ProductID" Parameter="productID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Quantity" Parameter="quantity" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
+  </Function>
+
+  <!-- Retrieve sales history -->
   <Function Name="Adlaw_RetrieveSales" Method="Adlaw_RetrieveSales">
     <ElementType Name="RetrieveSalesResult">
       <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
