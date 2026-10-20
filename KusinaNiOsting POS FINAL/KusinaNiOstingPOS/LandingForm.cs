@@ -7,19 +7,10 @@ namespace MiniMartPOS
 {
     public partial class LandingForm : Form
     {
-        private Image heroImage;
-
         public LandingForm()
         {
             InitializeComponent();
             DesignLandingForm();
-        }
-
-        private void LandingForm_Resize(object sender, EventArgs e)
-        {
-            // Keep the content centered when the window size changes.
-            PositionCard();
-            hero.Invalidate();
         }
 
         private void btnOrder_Click(object sender, EventArgs e)
@@ -54,38 +45,19 @@ namespace MiniMartPOS
 
         private void ShowLoading(string message)
         {
-            loading.Dock = DockStyle.Fill;
-            loading.BackColor = Color.FromArgb(225, 22, 16, 13);
-            loading.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             loading.Text = message;
             loading.Visible = true;
             loading.BringToFront();
             loading.Refresh();
         }
 
-        private void PositionCard()
-        {
-            int left = Math.Max(48, (ClientSize.Width - 1120) / 2);
-            int top = Math.Max(105, (ClientSize.Height - card.Height) / 2 + 15);
-            card.Location = new Point(left, top);
-        }
-
         private void hero_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-            if (heroImage != null)
+            if (hero.BackgroundImage != null)
             {
-                UiStyle.DrawImageCover(e.Graphics, heroImage, hero.ClientRectangle);
-            }
-            else if (hero.BackgroundImage == null)
-            {
-                using (LinearGradientBrush background = new LinearGradientBrush(
-                    hero.ClientRectangle, Color.FromArgb(18, 13, 11),
-                    Color.FromArgb(76, 35, 18), 25f))
-                {
-                    e.Graphics.FillRectangle(background, hero.ClientRectangle);
-                }
+                UiStyle.DrawImageCover(e.Graphics, hero.BackgroundImage, hero.ClientRectangle);
             }
 
             using (LinearGradientBrush shade = new LinearGradientBrush(
@@ -98,7 +70,6 @@ namespace MiniMartPOS
 
         private void DesignLandingForm()
         {
-            heroImage = UiStyle.LoadAsset("Images/landing_food_hero.png");
             UiStyle.RoundControl(card, 24);
             UiStyle.RoundControl(btnOrder, 12);
             UiStyle.RoundControl(btnAdmin, 10);
@@ -107,7 +78,6 @@ namespace MiniMartPOS
             UiStyle.AddHover(btnAdmin, Color.FromArgb(48, 38, 32),
                 Color.FromArgb(70, 53, 43));
             UiStyle.AddBorder(card, Color.FromArgb(93, 69, 55));
-            PositionCard();
         }
     }
 }
