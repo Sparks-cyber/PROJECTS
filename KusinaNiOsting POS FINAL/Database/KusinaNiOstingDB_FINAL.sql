@@ -280,7 +280,7 @@ GO
 -- LOW STOCK
 CREATE PROCEDURE GetLowStockItems
 AS
-SELECT M.MenuItemID, M.ItemCode, M.ItemName, M.Stock, M.ReorderLevel
+SELECT TOP 4 M.MenuItemID, M.ItemCode, M.ItemName, M.Stock, M.ReorderLevel
 FROM MenuItems M
 WHERE M.IsActive=1 AND M.Stock<=M.ReorderLevel
 ORDER BY M.Stock ASC;
@@ -290,7 +290,7 @@ GO
 -- RECENT TRANSACTIONS
 CREATE PROCEDURE GetRecentTransactions
 AS
-SELECT TOP 20 S.SaleID, S.TransactionNo, S.SaleDate, S.TotalAmount, S.PaymentMethod, U.FullName AS Cashier
+SELECT TOP 5 S.SaleID, S.TransactionNo, S.SaleDate, S.TotalAmount, S.PaymentMethod, U.FullName AS Cashier
 FROM Sales S
 INNER JOIN Users U ON S.UserID=U.UserID
 ORDER BY S.SaleDate DESC;
@@ -641,4 +641,126 @@ SET StoreName = @StoreName,
     PrintReceipt = @PrintReceipt,
     LowStockAlerts = @LowStockAlerts,
     SoundEffects = @SoundEffects;
+GO
+
+-- RETRIEVE PRODUCTS FOR CUSTOMER ORDER
+CREATE PROCEDURE SearchOrderProducts
+    @Search VARCHAR(100),
+    @CategoryID INT,
+    @Sort INT
+AS
+SELECT M.MenuItemID, M.ItemCode, M.ItemName, C.CategoryName,
+       M.Price, M.Stock, M.ReorderLevel, M.IsActive, P.ImagePath
+FROM MenuItems M
+INNER JOIN Categories C ON M.CategoryID = C.CategoryID
+LEFT JOIN ProductImages P ON M.MenuItemID = P.MenuItemID AND P.IsPrimary = 1
+WHERE M.IsActive = 1
+  AND M.Stock > 0
+  AND (@CategoryID = 0 OR M.CategoryID = @CategoryID)
+  AND (@Search = '' OR M.ItemCode LIKE '%' + @Search + '%'
+       OR M.ItemName LIKE '%' + @Search + '%')
+ORDER BY
+    CASE WHEN @Sort = 1 THEN M.Price END ASC,
+    CASE WHEN @Sort = 2 THEN M.Price END DESC,
+    C.CategoryName,
+    M.ItemName;
+GO
+
+-- RETRIEVE ITEMS OF ONE SALE
+CREATE PROCEDURE GetSaleItems
+    @SaleID INT
+AS
+SELECT M.ItemName, SI.Quantity, SI.UnitPrice, SI.Subtotal
+FROM SaleItems SI
+INNER JOIN MenuItems M ON SI.MenuItemID = M.MenuItemID
+WHERE SI.SaleID = @SaleID
+ORDER BY M.ItemName;
+GO
+
+-- RETRIEVE ONE SALE WITH CASHIER NAME
+CREATE PROCEDURE GetSaleDetails
+    @SaleID INT
+AS
+SELECT S.SaleID, S.TransactionNo, S.SaleDate, S.PaymentMethod,
+       S.TotalAmount, S.CashReceived, S.ChangeAmount, U.FullName AS Cashier
+FROM Sales S
+INNER JOIN Users U ON S.UserID = U.UserID
+WHERE S.SaleID = @SaleID;
+GO
+
+-- RETRIEVE SALES REPORT TOTALS
+CREATE PROCEDURE GetReportSummary
+AS
+SELECT
+    ISNULL(SUM(CASE WHEN SaleDate >= CONVERT(DATE, GETDATE()) THEN TotalAmount ELSE 0 END), 0) AS DailySales,
+    ISNULL(SUM(CASE WHEN SaleDate >= DATEADD(DAY, 1 - DATEPART(WEEKDAY, GETDATE()), CONVERT(DATE, GETDATE())) THEN TotalAmount ELSE 0 END), 0) AS WeeklySales,
+    ISNULL(SUM(CASE WHEN SaleDate >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) THEN TotalAmount ELSE 0 END), 0) AS MonthlySales,
+    SUM(CASE WHEN SaleDate >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) THEN 1 ELSE 0 END) AS TransactionCount,
+    ISNULL((SELECT SUM(SI.Quantity)
+            FROM SaleItems SI
+            INNER JOIN Sales S2 ON SI.SaleID = S2.SaleID
+            WHERE S2.SaleDate >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)), 0) AS ItemsSold
+FROM Sales;
+GO
+
+-- RETRIEVE TOP PRODUCTS FOR SALES REPORT
+CREATE PROCEDURE GetTopProducts
+AS
+SELECT TOP 8 M.ItemName, C.CategoryName,
+       SUM(SI.Quantity) AS Quantity,
+       SUM(SI.Subtotal) AS TotalSales
+FROM SaleItems SI
+INNER JOIN Sales S ON SI.SaleID = S.SaleID
+INNER JOIN MenuItems M ON SI.MenuItemID = M.MenuItemID
+INNER JOIN Categories C ON M.CategoryID = C.CategoryID
+WHERE S.SaleDate >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+GROUP BY M.ItemName, C.CategoryName
+ORDER BY SUM(SI.Quantity) DESC;
+GO
+
+-- RETRIEVE DASHBOARD SUMMARY
+CREATE PROCEDURE GetDashboardSummary
+AS
+SELECT
+    ISNULL((SELECT SUM(TotalAmount) FROM Sales
+            WHERE SaleDate >= CONVERT(DATE, GETDATE())), 0) AS TodaySales,
+    (SELECT COUNT(*) FROM Sales
+     WHERE SaleDate >= CONVERT(DATE, GETDATE())) AS TodayTransactions,
+    (SELECT COUNT(*) FROM MenuItems WHERE IsActive = 1) AS ActiveProducts,
+    (SELECT COUNT(*) FROM MenuItems
+     WHERE IsActive = 1 AND Stock <= ReorderLevel) AS LowStockCount;
+GO
+
+-- RETRIEVE DAILY SALES FOR DASHBOARD CHART
+CREATE PROCEDURE GetDailySales
+    @Days INT
+AS
+SELECT CONVERT(DATE, D.SaleDate) AS SaleDay,
+       SUM(D.TotalAmount) AS TotalSales
+FROM Sales D
+WHERE D.SaleDate >= DATEADD(DAY, -@Days + 1, CONVERT(DATE, GETDATE()))
+GROUP BY CONVERT(DATE, D.SaleDate)
+ORDER BY CONVERT(DATE, D.SaleDate);
+GO
+
+-- RETRIEVE CATEGORY SALES FOR DASHBOARD CHART
+CREATE PROCEDURE GetCategorySales
+AS
+SELECT TOP 4 C.CategoryName, SUM(SI.Subtotal) AS TotalSales
+FROM SaleItems SI
+INNER JOIN Sales S ON SI.SaleID = S.SaleID
+INNER JOIN MenuItems M ON SI.MenuItemID = M.MenuItemID
+INNER JOIN Categories C ON M.CategoryID = C.CategoryID
+WHERE S.SaleDate >= DATEADD(DAY, -30, CONVERT(DATE, GETDATE()))
+GROUP BY C.CategoryName
+ORDER BY SUM(SI.Subtotal) DESC;
+GO
+
+-- RETRIEVE DEFAULT ACTIVE USER FOR CUSTOMER ORDER
+CREATE PROCEDURE GetDefaultUser
+AS
+SELECT TOP 1 UserID, FullName
+FROM Users
+WHERE IsActive = 1
+ORDER BY UserID;
 GO

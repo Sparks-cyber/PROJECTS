@@ -6,6 +6,7 @@ namespace MiniMartPOS
 {
     public partial class StockAdjustForm : Form
     {
+        private readonly KusinaDataClassesDataContext db = new KusinaDataClassesDataContext();
         private readonly int itemID;
 
         public StockAdjustForm() : this(0) { }
@@ -19,7 +20,7 @@ namespace MiniMartPOS
 
         private void LoadItem()
         {
-            MenuItem item = DatabaseData.MenuItems.First(x => x.MenuItemID == itemID);
+            ProductEditRow item = db.GetProductSimple(itemID);
             lblItem.Text = item.ItemName;
             lblCurrent.Text = "Current Stock: " + item.Stock;
         }
@@ -35,7 +36,7 @@ namespace MiniMartPOS
                 return;
             }
 
-            MenuItem item = DatabaseData.MenuItems.First(x => x.MenuItemID == itemID);
+            ProductEditRow item = db.GetProductSimple(itemID);
             int newStock = item.Stock + change;
 
             if (newStock < 0)
@@ -55,6 +56,12 @@ namespace MiniMartPOS
             DatabaseData.AdjustStock(itemID, change, reason, userID);
             DialogResult = DialogResult.OK;
             Close();
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }

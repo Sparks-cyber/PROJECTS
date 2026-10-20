@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace MiniMartPOS
@@ -8,6 +7,7 @@ namespace MiniMartPOS
     public partial class ReceiptForm : Form
     {
         private readonly Sale sale;
+        private readonly KusinaDataClassesDataContext db = new KusinaDataClassesDataContext();
 
         public ReceiptForm() : this(null) { }
         public ReceiptForm(Sale completedSale)
@@ -26,11 +26,7 @@ namespace MiniMartPOS
             lblStore.Text = settings == null || string.IsNullOrWhiteSpace(settings.StoreName) ? AppConstants.DefaultStoreName : settings.StoreName;
             lblTransaction.Text = sale.TransactionNo + "  •  " + sale.SaleDate.ToString("MMM d, yyyy  h:mm tt");
             dgvItems.Rows.Clear();
-            var lines = from detail in DatabaseData.SaleItems
-                        join item in DatabaseData.MenuItems on detail.MenuItemID equals item.MenuItemID
-                        where detail.SaleID == sale.SaleID
-                        select new { item.ItemName, detail.Quantity, detail.UnitPrice, detail.Subtotal };
-            foreach (var line in lines)
+            foreach (SaleItemRow line in db.GetSaleItems(sale.SaleID))
                 dgvItems.Rows.Add(line.ItemName, line.Quantity, "₱" + line.UnitPrice.ToString("N2"), "₱" + line.Subtotal.ToString("N2"));
             dgvItems.ClearSelection();
             lblPayment.Text = "Payment method: " + sale.PaymentMethod;
@@ -42,6 +38,12 @@ namespace MiniMartPOS
             lblReceivedValue.Visible = sale.PaymentMethod == AppConstants.PaymentCash;
             lblChangeValue.Visible = sale.PaymentMethod == AppConstants.PaymentCash;
             lblFooter.Text = settings == null || string.IsNullOrWhiteSpace(settings.ReceiptFooter) ? AppConstants.DefaultReceiptFooter : settings.ReceiptFooter;
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }

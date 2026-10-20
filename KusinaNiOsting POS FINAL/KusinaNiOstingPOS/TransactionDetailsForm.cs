@@ -7,6 +7,7 @@ namespace MiniMartPOS
     public partial class TransactionDetailsForm : Form
     {
         private readonly int saleID;
+        private readonly KusinaDataClassesDataContext db = new KusinaDataClassesDataContext();
 
         public TransactionDetailsForm() : this(0) { }
 
@@ -19,34 +20,29 @@ namespace MiniMartPOS
 
         private void LoadData()
         {
-            Sale sale = DatabaseData.Sales.First(x => x.SaleID == saleID);
-            User user = DatabaseData.Users.First(x => x.UserID == sale.UserID);
+            SaleDetailsRow sale = db.GetSaleDetails(saleID).FirstOrDefault();
+            if (sale == null)
+                return;
 
             lblTransaction.Text = sale.TransactionNo;
             lblInfo.Text = sale.SaleDate.ToString("MMM d, yyyy h:mm tt") +
-                "   |   " + sale.PaymentMethod + "   |   " + user.FullName;
+                "   |   " + sale.PaymentMethod + "   |   " + sale.Cashier;
             lblTotal.Text = "Total: ₱" + sale.TotalAmount.ToString("N2") +
                 "   Cash: ₱" + sale.CashReceived.ToString("N2") +
                 "   Change: ₱" + sale.ChangeAmount.ToString("N2");
 
-            var items = from saleItem in DatabaseData.SaleItems
-                        join menuItem in DatabaseData.MenuItems
-                            on saleItem.MenuItemID equals menuItem.MenuItemID
-                        where saleItem.SaleID == saleID
-                        select new
-                        {
-                            menuItem.ItemName,
-                            saleItem.Quantity,
-                            saleItem.UnitPrice,
-                            saleItem.Subtotal
-                        };
-
-            foreach (var item in items)
+            foreach (SaleItemRow item in db.GetSaleItems(saleID))
             {
                 dgvItems.Rows.Add(item.ItemName, item.Quantity,
                     "₱" + item.UnitPrice.ToString("N2"),
                     "₱" + item.Subtotal.ToString("N2"));
             }
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }

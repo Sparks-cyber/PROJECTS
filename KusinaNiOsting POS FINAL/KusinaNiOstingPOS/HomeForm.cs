@@ -8,6 +8,7 @@ namespace MiniMartPOS
 {
     public partial class HomeForm : Form
     {
+        private readonly KusinaDataClassesDataContext db = new KusinaDataClassesDataContext();
         public HomeForm()
         {
             InitializeComponent();
@@ -27,23 +28,18 @@ namespace MiniMartPOS
 
         private void LoadDashboardData()
         {
-                    DateTime today = DateTime.Today;
-                    DateTime tomorrow = today.AddDays(1);
-                    var todaySales = DatabaseData.Sales.Where(s => s.SaleDate >= today && s.SaleDate < tomorrow);
+                    DashboardSummaryRow summary = db.GetDashboardSummary().FirstOrDefault();
+                    if (summary == null)
+                        return;
 
-                    decimal salesTotal = todaySales.Sum(s => (decimal?)s.TotalAmount) ?? 0m;
-                    int transCount = todaySales.Count();
-                    int menuCount = DatabaseData.MenuItems.Count(m => m.IsActive);
-                    int lowCount = DatabaseData.MenuItems.Count(m => m.IsActive && m.Stock <= m.ReorderLevel);
-
-                    lblSalesValue.Text = "₱" + salesTotal.ToString("N2");
-                    lblProductsValue.Text = menuCount.ToString();
-                    lblTransactionsValue.Text = transCount.ToString();
-                    lblStockValue.Text = lowCount.ToString();
+                    lblSalesValue.Text = "₱" + summary.TodaySales.ToString("N2");
+                    lblProductsValue.Text = summary.ActiveProducts.ToString();
+                    lblTransactionsValue.Text = summary.TodayTransactions.ToString();
+                    lblStockValue.Text = summary.LowStockCount.ToString();
                     lblSalesTrend.Text = "Total sales recorded today";
                     lblProductsTrend.Text = "Active menu items";
                     lblTransactionsTrend.Text = "Completed today";
-                    lblStockTrend.Text = lowCount > 0 ? "Attention needed" : "Stock levels are good";
+                    lblStockTrend.Text = summary.LowStockCount > 0 ? "Attention needed" : "Stock levels are good";
 
                     LoadSalesChart(); LoadCategoryChart(); LoadRecentTransactions(); LoadLowStock();
         }
@@ -81,16 +77,11 @@ namespace MiniMartPOS
             series.MarkerColor = Color.White;
 
             int days = cmbPeriod.SelectedIndex == 1 ? 30 : 7;
-            for (int i = days - 1; i >= 0; i--)
+            foreach (DailySalesRow sale in db.GetDailySales(days))
             {
-                DateTime day = DateTime.Today.AddDays(-i);
-                DateTime next = day.AddDays(1);
-                decimal total = DatabaseData.Sales
-                    .Where(x => x.SaleDate >= day && x.SaleDate < next)
-                    .Sum(x => (decimal?)x.TotalAmount) ?? 0m;
-
-                string label = days == 7 ? day.ToString("ddd") : day.ToString("MM/dd");
-                series.Points.AddXY(label, total);
+                string label = days == 7
+                    ? sale.SaleDay.ToString("ddd") : sale.SaleDay.ToString("MM/dd");
+                series.Points.AddXY(label, sale.TotalSales);
             }
 
             chartSales.Series.Add(series);
@@ -101,29 +92,22 @@ namespace MiniMartPOS
             chartPayment.Series.Clear(); chartPayment.ChartAreas.Clear(); chartPayment.Legends.Clear();
             ChartArea area = new ChartArea("CategoryArea"); area.BackColor = Color.Transparent; chartPayment.ChartAreas.Add(area);
             Series series = new Series("Categories"); series.ChartType = SeriesChartType.Doughnut; series["DoughnutRadius"] = "58";
-            DateTime start = DateTime.Today.AddDays(-30);
-            var data = (from si in DatabaseData.SaleItems
-                        join s in DatabaseData.Sales on si.SaleID equals s.SaleID
-                        join m in DatabaseData.MenuItems on si.MenuItemID equals m.MenuItemID
-                        join c in DatabaseData.Categories on m.CategoryID equals c.CategoryID
-                        where s.SaleDate >= start
-                        group si by c.CategoryName into g
-                        select new { Category = g.Key, Total = g.Sum(x => x.Subtotal) })
-                        .OrderByDescending(x => x.Total).Take(4).ToList();
+            var data = db.GetCategorySales().ToList();
 
             if (data.Count == 0) series.Points.AddXY("No sales yet", 1);
-            else foreach (var x in data) series.Points.AddXY(x.Category, x.Total);
+            else foreach (CategorySalesRow item in data)
+                series.Points.AddXY(item.CategoryName, item.TotalSales);
             chartPayment.Series.Add(series);
 
             Label[] names = { lblCash, lblGcash, lblCard, lblOther };
             Label[] values = { lblCashValue, lblGcashValue, lblCardValue, lblOtherValue };
-            decimal grand = data.Sum(x => x.Total);
+            decimal grand = data.Sum(x => x.TotalSales);
             for (int i = 0; i < names.Length; i++)
             {
                 if (i < data.Count)
                 {
-                    names[i].Text = "■ " + data[i].Category;
-                    values[i].Text = grand == 0 ? "0%" : ((data[i].Total / grand) * 100m).ToString("0") + "%";
+                    names[i].Text = "■ " + data[i].CategoryName;
+                    values[i].Text = grand == 0 ? "0%" : ((data[i].TotalSales / grand) * 100m).ToString("0") + "%";
                     names[i].Visible = values[i].Visible = true;
                 }
                 else { names[i].Visible = values[i].Visible = false; }
@@ -133,10 +117,9 @@ namespace MiniMartPOS
         private void LoadRecentTransactions()
         {
             dgvRecent.Rows.Clear();
-            var sales = DatabaseData.Sales.OrderByDescending(s => s.SaleDate).Take(5).ToList();
-            foreach (Sale sale in sales)
+            foreach (GetRecentTransactionsResult sale in db.GetRecentTransactions())
             {
-                var lines = (from si in DatabaseData.SaleItems join m in DatabaseData.MenuItems on si.MenuItemID equals m.MenuItemID where si.SaleID == sale.SaleID select new { m.ItemName, si.Quantity }).ToList();
+                var lines = db.GetSaleItems(sale.SaleID).ToList();
                 string items = string.Join(", ", lines.Select(x => x.ItemName + (x.Quantity > 1 ? " x" + x.Quantity : "")));
                 int qty = lines.Sum(x => x.Quantity);
                 dgvRecent.Rows.Add(sale.TransactionNo, items, qty, "₱" + sale.TotalAmount.ToString("N2"), sale.PaymentMethod, sale.SaleDate.ToString("h:mm tt"));
@@ -145,7 +128,7 @@ namespace MiniMartPOS
 
         private void LoadLowStock()
         {
-            var low = DatabaseData.MenuItems.Where(m => m.IsActive && m.Stock <= m.ReorderLevel).OrderBy(m => m.Stock).Take(4).ToList();
+            var low = db.GetLowStockItems().ToList();
             Label[] itemLabels = { lblLowItem1, lblLowItem2, lblLowItem3, lblLowItem4 };
             Label[] badges = { lblCriticalBadge, lblLowBadge1, lblLowBadge2, lblLowBadge3 };
             for (int i = 0; i < itemLabels.Length; i++)
@@ -158,6 +141,12 @@ namespace MiniMartPOS
                 }
                 else { itemLabels[i].Visible = badges[i].Visible = false; }
             }
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }

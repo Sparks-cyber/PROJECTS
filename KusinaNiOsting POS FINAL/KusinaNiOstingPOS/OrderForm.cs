@@ -9,6 +9,7 @@ namespace MiniMartPOS
     public partial class OrderForm : Form
     {
         private readonly List<CartLine> cart = new List<CartLine>();
+        private readonly KusinaDataClassesDataContext db = new KusinaDataClassesDataContext();
         private readonly Dictionary<Button, int> buttonItemIds = new Dictionary<Button, int>();
         private readonly List<Button> productButtons = new List<Button>();
         private int selectedCategoryId;
@@ -39,7 +40,7 @@ namespace MiniMartPOS
         private void InitializeProductCards()
         {
             productButtons.AddRange(new[] { btnP1,btnP2,btnP3,btnP4,btnP5,btnP6,btnP7,btnP8,btnP9,btnP10,btnP11,btnP12,btnP13 });
-            EnsureProductCardCapacity(DatabaseData.MenuItems.Count);
+            EnsureProductCardCapacity(db.SearchOrderProducts("", 0, 0).Count());
             foreach(Button button in productButtons) ConfigureProductCard(button);
         }
 
@@ -157,14 +158,8 @@ namespace MiniMartPOS
             }
 
                     string key = txtSearch.Text.Trim();
-                    IEnumerable<MenuItem> query = DatabaseData.MenuItems
-                        .Where(m => m.IsActive && m.Stock > 0 &&
-                            (selectedCategoryId==0 || m.CategoryID==selectedCategoryId) &&
-                            (key == "" || m.ItemName.IndexOf(key,StringComparison.OrdinalIgnoreCase)>=0 || m.ItemCode.IndexOf(key,StringComparison.OrdinalIgnoreCase)>=0));
-                    if(cmbSort.SelectedIndex==1) query=query.OrderBy(m=>m.Price).ThenBy(m=>m.ItemName);
-                    else if(cmbSort.SelectedIndex==2) query=query.OrderByDescending(m=>m.Price).ThenBy(m=>m.ItemName);
-                    else query=query.OrderBy(m=>m.CategoryID).ThenBy(m=>m.ItemName);
-                    List<MenuItem> items=query.ToList();
+                    List<ProductRow> items = db.SearchOrderProducts(
+                        key, selectedCategoryId, cmbSort.SelectedIndex).ToList();
 
                     for (int i = 0; i < buttons.Length; i++)
                     {
@@ -172,9 +167,7 @@ namespace MiniMartPOS
 
                         if (i < items.Count)
                         {
-                            MenuItem item = items[i];
-                            ProductImage productImage = DatabaseData.ProductImages.FirstOrDefault(p =>
-                                p.MenuItemID == item.MenuItemID && p.IsPrimary);
+                            ProductRow item = items[i];
 
                             button.Text = item.ItemName + "\n₱" + item.Price.ToString("N2") +
                                 "\nStock: " + item.Stock;
@@ -187,8 +180,8 @@ namespace MiniMartPOS
                             button.TextImageRelation = TextImageRelation.ImageAboveText;
                             button.Padding = new Padding(6, 12, 6, 10);
 
-                            if (productImage != null)
-                                button.Image = UiStyle.LoadProductImage(productImage.ImagePath, 96, 96);
+                            if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                                button.Image = UiStyle.LoadProductImage(item.ImagePath, 96, 96);
                         }
                         else
                         {
@@ -209,7 +202,7 @@ namespace MiniMartPOS
             if (button == null || !buttonItemIds.ContainsKey(button)) return;
             int id = buttonItemIds[button];
 
-                MenuItem item = DatabaseData.MenuItems.FirstOrDefault(m => m.MenuItemID == id && m.IsActive);
+                ProductEditRow item = db.GetProductSimple(id);
                 if (item == null || item.Stock <= 0) { UiDialogs.Warning(this, "Out of Stock", "This item is currently out of stock."); LoadProductButtons(); return; }
 
                 CartLine line = cart.FirstOrDefault(c => c.MenuItemID == id);
@@ -264,7 +257,7 @@ namespace MiniMartPOS
 
                 foreach (CartLine line in cart)
                 {
-                    MenuItem check = DatabaseData.MenuItems.First(m => m.MenuItemID == line.MenuItemID);
+                    ProductEditRow check = db.GetProductSimple(line.MenuItemID);
                     if (check.Stock < line.Quantity)
                     {
                         UiDialogs.Warning(this, "Stock Updated", check.ItemName + " now has only " + check.Stock + " left. Please review the order and try again.");
@@ -275,7 +268,12 @@ namespace MiniMartPOS
                         int saleUserId = Session.CurrentUserID;
                         if (saleUserId <= 0)
                         {
-                            User kioskUser = DatabaseData.Users.First(u => u.IsActive);
+                            DefaultUserRow kioskUser = db.GetDefaultUser().FirstOrDefault();
+                            if (kioskUser == null)
+                            {
+                                UiDialogs.Warning(this, "Order", "No active user account was found.");
+                                return;
+                            }
                             saleUserId = kioskUser.UserID;
                         }
 
@@ -361,6 +359,12 @@ namespace MiniMartPOS
                 button.Margin = new Padding(0, 0, 8, 0);
                 UiStyle.RoundControl(button, 8);
             }
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            db.Dispose();
+            base.OnFormClosed(e);
         }
     }
 }
