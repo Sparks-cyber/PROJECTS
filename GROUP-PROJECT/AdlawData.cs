@@ -5,6 +5,14 @@ using System.Reflection;
 
 namespace GROUP_PROJECT
 {
+    public class AuthenticationResult
+    {
+        public int UserID { get; set; }
+        public string Username { get; set; }
+        public string DisplayName { get; set; }
+        public string Role { get; set; }
+    }
+
     public class ProductResult
     {
         public int ProductID { get; set; }
@@ -48,6 +56,19 @@ namespace GROUP_PROJECT
         public AdlawDataContext()
             : base(ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString)
         {
+        }
+
+        [Function(Name = "Adlaw_Authenticate")]
+        public ISingleResult<AuthenticationResult> Adlaw_Authenticate(
+            [Parameter(Name = "Username")] string username,
+            [Parameter(Name = "PasswordHash")] string passwordHash)
+        {
+            return (ISingleResult<AuthenticationResult>)ExecuteMethodCall(
+                this,
+                (MethodInfo)MethodInfo.GetCurrentMethod(),
+                username,
+                passwordHash
+            ).ReturnValue;
         }
 
         [Function(Name = "Adlaw_RetrieveProducts")]

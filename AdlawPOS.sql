@@ -23,6 +23,27 @@ VALUES
     ('Refresher');
 GO
 
+-- Store administrator accounts
+CREATE TABLE UserAccounts
+(
+    UserID int IDENTITY(1, 1) PRIMARY KEY,
+    Username nvarchar(50) NOT NULL UNIQUE,
+    PasswordHash char(64) NOT NULL,
+    DisplayName nvarchar(100) NOT NULL,
+    Role nvarchar(20) NOT NULL,
+    IsActive bit NOT NULL DEFAULT (1)
+);
+GO
+
+-- Add the default administrator account (password: admin123)
+INSERT INTO UserAccounts
+    (Username, PasswordHash, DisplayName, Role, IsActive)
+VALUES
+    ('admin',
+     '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
+     'Adlaw Administrator', 'Admin', 1);
+GO
+
 -- Store all product records
 CREATE TABLE Products
 (
@@ -80,6 +101,23 @@ CREATE TABLE SaleItems
     CONSTRAINT CK_SaleItems_Quantity
         CHECK (Quantity > 0)
 );
+GO
+
+-- Retrieve all active products
+-- Authenticate an active user account
+CREATE PROCEDURE Adlaw_Authenticate
+    @Username nvarchar(50),
+    @PasswordHash char(64)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT UserID, Username, DisplayName, Role
+    FROM UserAccounts
+    WHERE Username = @Username
+      AND PasswordHash = @PasswordHash
+      AND IsActive = 1;
+END;
 GO
 
 -- Retrieve all active products

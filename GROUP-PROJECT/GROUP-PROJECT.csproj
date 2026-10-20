@@ -57,6 +57,7 @@
     </Compile>
     <Compile Include="AdlawData.cs" />
     <Compile Include="CartItem.cs" />
+    <Compile Include="PasswordSecurity.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

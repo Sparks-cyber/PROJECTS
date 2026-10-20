@@ -1,10 +1,14 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GROUP_PROJECT
 {
     public partial class Form1 : Form
     {
+        public AuthenticationResult LoggedInUser { get; private set; }
+
         public Form1()
         {
             InitializeComponent();
@@ -29,23 +33,73 @@ namespace GROUP_PROJECT
             }
         }
 
-        private void btnlogin_Click(object sender, EventArgs e)
+        private async void btnlogin_Click(object sender, EventArgs e)
         {
-            if (textBox1.Text == "admin" &&
-     txtPassword.Text == "admin123")
-            {
-                Products products = new Products();
+            string username = textBox1.Text.Trim();
+            string password = txtPassword.Text;
 
-                // Return to this login form when the main form closes.
+            if (username == "" || password == "")
+            {
+                MessageBox.Show("Please fill in all fields.", "Adlaw POS",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            btnlogin.Enabled = false;
+
+            try
+            {
+                string passwordHash = PasswordSecurity.GetHashSha256(password);
+
+                AuthenticationResult user = await Task.Run(() =>
+                {
+                    using (AdlawDataContext db = new AdlawDataContext())
+                    {
+                        db.CommandTimeout = 10;
+                        return db.Adlaw_Authenticate(username, passwordHash)
+                            .FirstOrDefault();
+                    }
+                });
+
+                if (user == null)
+                {
+                    MessageBox.Show("Invalid username or password.", "Adlaw POS",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (user.Role != "Admin")
+                {
+                    MessageBox.Show("This account does not have administrator access.",
+                        "Adlaw POS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                LoggedInUser = user;
+                Products products = new Products();
+                // Close the login after the admin dashboard closes.
                 products.FormClosed += Products_FormClosed;
                 products.Show();
                 this.Hide();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show(
-                    "Invalid username or password."
-                );
+                MessageBox.Show(ex.Message, "Login Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                if (!IsDisposed)
+                    btnlogin.Enabled = true;
+            }
+        }
+
+        private void txtPassword_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true;
+                btnlogin.PerformClick();
             }
         }
 

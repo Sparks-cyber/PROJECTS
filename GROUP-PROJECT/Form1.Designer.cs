@@ -62,6 +62,7 @@
             this.txtPassword.PasswordChar = '•';
             this.txtPassword.Size = new System.Drawing.Size(284, 32);
             this.txtPassword.TabIndex = 5;
+            this.txtPassword.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPassword_KeyDown);
             // 
             // btnShow
             // 
@@ -113,6 +114,7 @@
             this.linkLabel1.TabIndex = 12;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Create Account";
+            this.linkLabel1.Visible = false;
             // 
             // btnHide
             // 
@@ -134,6 +136,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(881, 639);
+            this.AcceptButton = this.btnlogin;
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.btnlogin);
             this.Controls.Add(this.radioButton1);

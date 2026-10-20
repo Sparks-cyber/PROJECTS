@@ -4,6 +4,19 @@
           xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
 
   <!-- Retrieve active products -->
+  <!-- Authenticate an active user -->
+  <Function Name="Adlaw_Authenticate" Method="Adlaw_Authenticate">
+    <Parameter Name="Username" Parameter="username" Type="System.String" DbType="NVarChar(50)" />
+    <Parameter Name="PasswordHash" Parameter="passwordHash" Type="System.String" DbType="Char(64)" />
+    <ElementType Name="AuthenticateResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Username" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="DisplayName" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Role" Type="System.String" DbType="NVarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+
+  <!-- Retrieve active products -->
   <Function Name="Adlaw_RetrieveProducts" Method="Adlaw_RetrieveProducts">
     <ElementType Name="RetrieveProductsResult">
       <Column Name="ProductID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
