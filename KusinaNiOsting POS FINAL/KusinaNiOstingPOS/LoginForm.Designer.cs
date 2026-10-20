@@ -102,7 +102,7 @@
             this.panelLoginCard.Controls.Add(this.lblSubtitle);
             this.panelLoginCard.Controls.Add(this.lblWelcomeAccent);
             this.panelLoginCard.Controls.Add(this.lblWelcome);
-            this.panelLoginCard.Location = new System.Drawing.Point(558, 47);
+            this.panelLoginCard.Location = new System.Drawing.Point(605, 104);
             this.panelLoginCard.Name = "panelLoginCard";
             this.panelLoginCard.Size = new System.Drawing.Size(570, 552);
             this.panelLoginCard.TabIndex = 1;
@@ -130,6 +130,7 @@
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(446, 54);
             this.btnLogin.TabIndex = 4;
+            this.btnLogin.TabStop = false;
             this.btnLogin.Text = "LOGIN AS ADMIN";
             this.btnLogin.UseVisualStyleBackColor = false;
             this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
@@ -260,6 +261,7 @@
             // 
             // LoginForm
             // 
+            this.AcceptButton = this.btnLogin;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(241, 245, 249);

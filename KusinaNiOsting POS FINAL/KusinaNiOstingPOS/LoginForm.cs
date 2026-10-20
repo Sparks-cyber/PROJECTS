@@ -14,31 +14,13 @@ namespace MiniMartPOS
         {
             InitializeComponent();
             db.CommandTimeout = 10;
-            AcceptButton = btnLogin;
             DesignLoginForm();
         }
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
-            // Center the login controls when the form opens.
-            CenterLoginCard();
+            // Focus the username when the login opens.
             txtUsername.Focus();
-        }
-
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            CenterLoginCard();
-        }
-
-        private void CenterLoginCard()
-        {
-            if (panelLoginCard == null || panelBrand == null)
-                return;
-
-            int availableWidth = ClientSize.Width - panelBrand.Width;
-            panelLoginCard.Left = panelBrand.Width + Math.Max(20, (availableWidth - panelLoginCard.Width) / 2);
-            panelLoginCard.Top = Math.Max(20, (ClientSize.Height - panelLoginCard.Height) / 2);
         }
 
         private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
@@ -129,18 +111,6 @@ namespace MiniMartPOS
 
         private void DesignLoginForm()
         {
-            Image foodPhoto = UiStyle.LoadAsset("Images/login_food_photo.png");
-
-            if (foodPhoto != null)
-            {
-                Image oldImage = panelBrand.BackgroundImage;
-                panelBrand.BackgroundImage = foodPhoto;
-                panelBrand.BackgroundImageLayout = ImageLayout.Stretch;
-
-                if (oldImage != null && oldImage != Properties.Resources.login_brand_panel)
-                    oldImage.Dispose();
-            }
-
             UiStyle.RoundControl(panelLoginCard, 22);
             UiStyle.RoundControl(panelUsernameInput, 11);
             UiStyle.RoundControl(panelPasswordInput, 11);
@@ -151,7 +121,6 @@ namespace MiniMartPOS
             UiStyle.AddBorder(panelPasswordInput, Color.FromArgb(203, 213, 225));
             UiStyle.SetCueBanner(txtUsername, "Enter your username");
             UiStyle.SetCueBanner(txtPassword, "Enter your password");
-            UiStyle.PolishForm(this);
         }
     }
 }
