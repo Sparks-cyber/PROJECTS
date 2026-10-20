@@ -172,12 +172,10 @@ BEGIN
         (CONCAT('TEMP-', CONVERT(nvarchar(36), NEWID())),
          @ItemName, @CategoryID, @Price, @Stock, @ImagePath, 0);
 
-    DECLARE @NewProductID int = CONVERT(int, SCOPE_IDENTITY());
-
     -- Replace the temporary code with the final automatic item code
     UPDATE Products
-    SET ItemCode = CONCAT('PRD-', RIGHT(CONCAT('000000', @NewProductID), 6))
-    WHERE ProductID = @NewProductID;
+    SET ItemCode = 'PRD-' + RIGHT('000000' + CONVERT(nvarchar(6), ProductID), 6)
+    WHERE ProductID = CONVERT(int, SCOPE_IDENTITY());
 
 END;
 GO
@@ -267,26 +265,7 @@ CREATE PROCEDURE Adlaw_AddSaleItem
     @Quantity int
 AS
 BEGIN
-    DECLARE @UnitPrice decimal(18, 2);
-    DECLARE @UpdatedRows int;
-
-    -- Read the selected product price
-    SELECT @UnitPrice = Price
-    FROM Products
-    WHERE ProductID = @ProductID
-      AND IsDeleted = 0;
-
-    -- Reduce stock only when enough quantity remains
-    UPDATE Products
-    SET Stock = Stock - @Quantity
-    WHERE ProductID = @ProductID
-      AND IsDeleted = 0
-      AND @Quantity > 0
-      AND Stock >= @Quantity;
-
-    SET @UpdatedRows = @@ROWCOUNT;
-
-    -- Save the item only when stock was updated
+    -- Save the item when enough stock is available
     INSERT INTO SaleItems
         (SaleID, ProductID, ItemCode, ItemName,
          Quantity, UnitPrice, Subtotal)
@@ -294,15 +273,33 @@ BEGIN
            @Quantity, Price, Price * @Quantity
     FROM Products
     WHERE ProductID = @ProductID
-      AND @UpdatedRows = 1;
+      AND IsDeleted = 0
+      AND @Quantity > 0
+      AND Stock >= @Quantity;
 
-    -- Add the item subtotal to the sale total
+    -- Reduce the stock of the saved item
+    UPDATE Products
+    SET Stock = Stock - @Quantity
+    WHERE ProductID = @ProductID
+      AND EXISTS
+          (SELECT SaleItemID
+           FROM SaleItems
+           WHERE SaleID = @SaleID
+             AND ProductID = @ProductID);
+
+    -- Recalculate the complete sale total
     UPDATE Sales
-    SET TotalAmount = TotalAmount + (@UnitPrice * @Quantity)
-    WHERE SaleID = @SaleID
-      AND @UpdatedRows = 1;
+    SET TotalAmount =
+        (SELECT SUM(Subtotal)
+         FROM SaleItems
+         WHERE SaleID = @SaleID)
+    WHERE SaleID = @SaleID;
 
-    RETURN @UpdatedRows;
+    RETURN
+        (SELECT COUNT(*)
+         FROM SaleItems
+         WHERE SaleID = @SaleID
+           AND ProductID = @ProductID);
 END;
 GO
 
