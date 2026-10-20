@@ -38,6 +38,14 @@ namespace GROUP_PROJECT
         private void RefreshInventory()
         {
             List<InventoryResult> inventory = db.Adlaw_RetrieveInventory().ToList();
+
+            // Create the readable product name used by the combo box.
+            foreach (InventoryResult product in inventory)
+            {
+                product.DisplayName = product.ItemCode + " - " +
+                    product.ItemName + " (" + product.Stock + ")";
+            }
+
             gridInventory.DataSource = inventory;
             cboProduct.DataSource = inventory.ToList();
             gridInventory.Columns["ProductID"].Visible = false;

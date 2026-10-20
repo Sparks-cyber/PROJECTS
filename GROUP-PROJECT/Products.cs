@@ -20,9 +20,13 @@ namespace GROUP_PROJECT
 
             button1.Click += Dashboard_Click;
             btnneworder.Click += NewOrder_Click;
-            button5.Text = "DELETED PRODUCTS";
-            button5.Click += ShowDeletedProducts;
             button4.Click += Logout_Click;
+
+            btnAvailable.Click += ShowAvailableProducts;
+            btnUnavailable.Click += ShowUnavailableProducts;
+            btnEdit.Click += EditSelectedProduct;
+            btnStatus.Click += ChangeSelectedStatus;
+            btnHardDelete.Click += HardDeleteSelectedProduct;
         }
 
         private void Products_Load(object sender, EventArgs e)
@@ -48,9 +52,25 @@ namespace GROUP_PROJECT
 
         private void Search(object sender, EventArgs e)
         {
-            // Filter active products using the search text.
+            // Filter the current product list using the search text.
             if (showingDeletedProducts)
             {
+                System.Collections.Generic.List<ProductResult> products =
+                    db.Adlaw_RetrieveDeletedProducts().ToList();
+                System.Collections.Generic.List<ProductResult> filteredProducts =
+                    new System.Collections.Generic.List<ProductResult>();
+                string searchText = textBox1.Text.Trim().ToLower();
+
+                foreach (ProductResult product in products)
+                {
+                    if (product.ItemCode.ToLower().Contains(searchText) ||
+                        product.ItemName.ToLower().Contains(searchText))
+                    {
+                        filteredProducts.Add(product);
+                    }
+                }
+
+                DisplayProducts(filteredProducts);
                 return;
             }
 
@@ -123,23 +143,45 @@ namespace GROUP_PROJECT
             Retrieve();
         }
 
-        private void ShowDeletedProducts(object sender, EventArgs e)
+        private void ShowAvailableProducts(object sender, EventArgs e)
         {
-            // Switch between active and deleted products.
-            showingDeletedProducts = !showingDeletedProducts;
-            if (showingDeletedProducts)
-                button5.Text = "ACTIVE PRODUCTS";
-            else
-                button5.Text = "DELETED PRODUCTS";
+            // Show products that customers can order.
+            showingDeletedProducts = false;
+            UpdateProductView();
+        }
+
+        private void ShowUnavailableProducts(object sender, EventArgs e)
+        {
+            // Show products that are currently unavailable.
+            showingDeletedProducts = true;
+            UpdateProductView();
+        }
+
+        private void UpdateProductView()
+        {
+            textBox1.Clear();
             btnadd.Enabled = !showingDeletedProducts;
-            textBox1.Enabled = !showingDeletedProducts;
+            btnEdit.Enabled = !showingDeletedProducts;
+            btnHardDelete.Visible = showingDeletedProducts;
 
             if (showingDeletedProducts)
+            {
+                btnStatus.Text = "SET AVAILABLE";
+                btnAvailable.BackColor = Color.FromArgb(239, 243, 240);
+                btnAvailable.ForeColor = Color.FromArgb(48, 70, 57);
+                btnUnavailable.BackColor = Color.FromArgb(77, 108, 88);
+                btnUnavailable.ForeColor = Color.White;
                 DisplayProducts(db.Adlaw_RetrieveDeletedProducts().ToList());
+            }
             else
-                DisplayProducts(db.Adlaw_RetrieveProducts().ToList());
-
-            UpdateActionHeaders();
+            {
+                btnStatus.Text = "SET UNAVAILABLE";
+                btnAvailable.BackColor = Color.FromArgb(77, 108, 88);
+                btnAvailable.ForeColor = Color.White;
+                btnUnavailable.BackColor = Color.FromArgb(239, 243, 240);
+                btnUnavailable.ForeColor = Color.FromArgb(48, 70, 57);
+                Retrieve();
+            }
         }
 
         private void Logout_Click(object sender, EventArgs e)
@@ -203,9 +245,6 @@ namespace GROUP_PROJECT
 
             grid.AutoSizeColumnsMode =
                 DataGridViewAutoSizeColumnsMode.Fill;
-
-            grid.CellContentClick += Grid_CellContentClick;
-
 
             grid.ColumnHeadersDefaultCellStyle.BackColor =
                 Color.FromArgb(77, 108, 88);
@@ -321,21 +360,6 @@ namespace GROUP_PROJECT
             imagePathColumn.Name = "ImagePath";
             imagePathColumn.Visible = false;
 
-            DataGridViewButtonColumn editColumn = new DataGridViewButtonColumn();
-            editColumn.Name = "EditAction";
-            editColumn.HeaderText = "EDIT";
-            editColumn.Text = "EDIT";
-            editColumn.UseColumnTextForButtonValue = true;
-            editColumn.FillWeight = 65;
-
-            DataGridViewButtonColumn deleteColumn = new DataGridViewButtonColumn();
-            deleteColumn.Name = "DeleteAction";
-            deleteColumn.HeaderText = "DELETE";
-            deleteColumn.Text = "SOFT DELETE";
-            deleteColumn.UseColumnTextForButtonValue = true;
-            deleteColumn.FillWeight = 80;
-
-
             grid.Columns.Add(imageColumn);
             grid.Columns.Add(codeColumn);
             grid.Columns.Add(nameColumn);
@@ -345,8 +369,6 @@ namespace GROUP_PROJECT
             grid.Columns.Add(idColumn);
             grid.Columns.Add(categoryIdColumn);
             grid.Columns.Add(imagePathColumn);
-            grid.Columns.Add(editColumn);
-            grid.Columns.Add(deleteColumn);
 
 
             panel3.Padding =
@@ -429,56 +451,58 @@ namespace GROUP_PROJECT
             grid.ClearSelection();
         }
 
-        private void UpdateActionHeaders()
+        private DataGridViewRow GetSelectedProductRow()
         {
-            DataGridViewButtonColumn firstAction =
-                (DataGridViewButtonColumn)grid.Columns["EditAction"];
-            DataGridViewButtonColumn secondAction =
-                (DataGridViewButtonColumn)grid.Columns["DeleteAction"];
+            if (grid.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Select a product first.", "Adlaw POS",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return null;
+            }
 
-            if (showingDeletedProducts)
-            {
-                firstAction.HeaderText = "RESTORE";
-                firstAction.Text = "RESTORE";
-                secondAction.HeaderText = "PERMANENT";
-                secondAction.Text = "HARD DELETE";
-            }
-            else
-            {
-                firstAction.HeaderText = "EDIT";
-                firstAction.Text = "EDIT";
-                secondAction.HeaderText = "DELETE";
-                secondAction.Text = "SOFT DELETE";
-            }
+            return grid.SelectedRows[0];
         }
 
-        private void Grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void EditSelectedProduct(object sender, EventArgs e)
         {
-            // Run the selected product row action.
-            if (e.RowIndex < 0)
+            // Edit the selected available product.
+            DataGridViewRow row = GetSelectedProductRow();
+            if (row == null)
             {
                 return;
             }
 
-            string columnName = grid.Columns[e.ColumnIndex].Name;
-            int productID = Convert.ToInt32(
-                grid.Rows[e.RowIndex].Cells["ProductID"].Value);
+            int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
+            EditProduct(row.Index, productID);
+        }
 
-            if (columnName == "EditAction")
+        private void ChangeSelectedStatus(object sender, EventArgs e)
+        {
+            // Change the selected product between available and unavailable.
+            DataGridViewRow row = GetSelectedProductRow();
+            if (row == null)
             {
-                if (showingDeletedProducts)
-                {
-                    RestoreProduct(productID);
-                }
-                else
-                {
-                    EditProduct(e.RowIndex, productID);
-                }
+                return;
             }
-            else if (columnName == "DeleteAction")
+
+            int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
+            if (showingDeletedProducts)
+                RestoreProduct(productID);
+            else
+                DeleteProduct(productID, false);
+        }
+
+        private void HardDeleteSelectedProduct(object sender, EventArgs e)
+        {
+            // Permanently delete the selected unavailable product.
+            DataGridViewRow row = GetSelectedProductRow();
+            if (row == null)
             {
-                DeleteProduct(productID, showingDeletedProducts);
+                return;
             }
+
+            int productID = Convert.ToInt32(row.Cells["ProductID"].Value);
+            DeleteProduct(productID, true);
         }
 
         private void EditProduct(int rowIndex, int productID)
@@ -521,7 +545,7 @@ namespace GROUP_PROJECT
             if (hardDelete)
                 message = "Permanently delete this product? This cannot be undone.";
             else
-                message = "Move this product to deleted products?";
+                message = "Set this product as unavailable?";
 
             if (MessageBox.Show(message, "Adlaw POS", MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning) != DialogResult.Yes)
@@ -537,14 +561,14 @@ namespace GROUP_PROJECT
             else
             {
                 db.Adlaw_SoftDeleteProduct(productID);
-                Retrieve();
+                Search(null, EventArgs.Empty);
             }
         }
 
         private void RestoreProduct(int productID)
         {
             db.Adlaw_RestoreProduct(productID);
-            DisplayProducts(db.Adlaw_RetrieveDeletedProducts().ToList());
+            Search(null, EventArgs.Empty);
         }
 
     }

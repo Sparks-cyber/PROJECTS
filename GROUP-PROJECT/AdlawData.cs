@@ -44,10 +44,7 @@ namespace GROUP_PROJECT
         public string ItemName { get; set; }
         public int Stock { get; set; }
 
-        public string DisplayName
-        {
-            get { return ItemCode + " - " + ItemName + " (" + Stock + ")"; }
-        }
+        public string DisplayName { get; set; }
     }
 
     public class AdlawDataContext : DataContext

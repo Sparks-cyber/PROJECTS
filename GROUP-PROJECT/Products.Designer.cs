@@ -9,7 +9,6 @@
         private System.Windows.Forms.Button btnneworder;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
@@ -21,6 +20,11 @@
 
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button btnadd;
+        private System.Windows.Forms.Button btnAvailable;
+        private System.Windows.Forms.Button btnUnavailable;
+        private System.Windows.Forms.Button btnEdit;
+        private System.Windows.Forms.Button btnStatus;
+        private System.Windows.Forms.Button btnHardDelete;
 
         protected override void Dispose(bool disposing)
         {
@@ -41,13 +45,17 @@
             this.btnneworder = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.lblSearch = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btnadd = new System.Windows.Forms.Button();
+            this.btnAvailable = new System.Windows.Forms.Button();
+            this.btnUnavailable = new System.Windows.Forms.Button();
+            this.btnEdit = new System.Windows.Forms.Button();
+            this.btnStatus = new System.Windows.Forms.Button();
+            this.btnHardDelete = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.pnladdproduct = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -119,26 +127,12 @@
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.button4.ForeColor = System.Drawing.Color.White;
-            this.button4.Location = new System.Drawing.Point(15, 700);
+            this.button4.Location = new System.Drawing.Point(15, 630);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(180, 52);
             this.button4.TabIndex = 5;
             this.button4.Text = "LOGOUT";
             this.button4.UseVisualStyleBackColor = false;
-            // 
-            // button5
-            // 
-            this.button5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(243)))), ((int)(((byte)(240)))));
-            this.button5.FlatAppearance.BorderSize = 0;
-            this.button5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button5.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.button5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
-            this.button5.Location = new System.Drawing.Point(15, 405);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(180, 52);
-            this.button5.TabIndex = 4;
-            this.button5.Text = "ORDERS";
-            this.button5.UseVisualStyleBackColor = false;
             // 
             // panel1
             // 
@@ -147,12 +141,11 @@
             this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.btnneworder);
             this.panel1.Controls.Add(this.button3);
-            this.panel1.Controls.Add(this.button5);
             this.panel1.Controls.Add(this.button4);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(210, 780);
+            this.panel1.Size = new System.Drawing.Size(210, 700);
             this.panel1.TabIndex = 5;
             // 
             // panel2
@@ -162,10 +155,15 @@
             this.panel2.Controls.Add(this.lblSearch);
             this.panel2.Controls.Add(this.textBox1);
             this.panel2.Controls.Add(this.btnadd);
+            this.panel2.Controls.Add(this.btnAvailable);
+            this.panel2.Controls.Add(this.btnUnavailable);
+            this.panel2.Controls.Add(this.btnEdit);
+            this.panel2.Controls.Add(this.btnStatus);
+            this.panel2.Controls.Add(this.btnHardDelete);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(210, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1135, 100);
+            this.panel2.Size = new System.Drawing.Size(990, 125);
             this.panel2.TabIndex = 6;
             // 
             // label1
@@ -173,7 +171,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
-            this.label1.Location = new System.Drawing.Point(30, 27);
+            this.label1.Location = new System.Drawing.Point(25, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(153, 45);
             this.label1.TabIndex = 4;
@@ -181,11 +179,10 @@
             // 
             // lblSearch
             // 
-            this.lblSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblSearch.AutoSize = true;
             this.lblSearch.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblSearch.ForeColor = System.Drawing.Color.DimGray;
-            this.lblSearch.Location = new System.Drawing.Point(640, 18);
+            this.lblSearch.Location = new System.Drawing.Point(27, 68);
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.Size = new System.Drawing.Size(103, 13);
             this.lblSearch.TabIndex = 8;
@@ -193,11 +190,10 @@
             // 
             // textBox1
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox1.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.textBox1.Location = new System.Drawing.Point(640, 38);
+            this.textBox1.Location = new System.Drawing.Point(30, 87);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(275, 27);
+            this.textBox1.Size = new System.Drawing.Size(240, 27);
             this.textBox1.TabIndex = 5;
             // 
             // btnadd
@@ -208,7 +204,7 @@
             this.btnadd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnadd.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnadd.ForeColor = System.Drawing.Color.White;
-            this.btnadd.Location = new System.Drawing.Point(935, 29);
+            this.btnadd.Location = new System.Drawing.Point(800, 78);
             this.btnadd.Name = "btnadd";
             this.btnadd.Size = new System.Drawing.Size(165, 42);
             this.btnadd.TabIndex = 7;
@@ -216,15 +212,89 @@
             this.btnadd.UseVisualStyleBackColor = false;
             this.btnadd.Click += new System.EventHandler(this.button2_Click);
             // 
+            // btnAvailable
+            // 
+            this.btnAvailable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(108)))), ((int)(((byte)(88)))));
+            this.btnAvailable.FlatAppearance.BorderSize = 0;
+            this.btnAvailable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAvailable.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnAvailable.ForeColor = System.Drawing.Color.White;
+            this.btnAvailable.Location = new System.Drawing.Point(225, 18);
+            this.btnAvailable.Name = "btnAvailable";
+            this.btnAvailable.Size = new System.Drawing.Size(125, 36);
+            this.btnAvailable.TabIndex = 9;
+            this.btnAvailable.Text = "AVAILABLE";
+            this.btnAvailable.UseVisualStyleBackColor = false;
+            // 
+            // btnUnavailable
+            // 
+            this.btnUnavailable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(243)))), ((int)(((byte)(240)))));
+            this.btnUnavailable.FlatAppearance.BorderSize = 0;
+            this.btnUnavailable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUnavailable.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnUnavailable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
+            this.btnUnavailable.Location = new System.Drawing.Point(360, 18);
+            this.btnUnavailable.Name = "btnUnavailable";
+            this.btnUnavailable.Size = new System.Drawing.Size(135, 36);
+            this.btnUnavailable.TabIndex = 10;
+            this.btnUnavailable.Text = "UNAVAILABLE";
+            this.btnUnavailable.UseVisualStyleBackColor = false;
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(243)))), ((int)(((byte)(240)))));
+            this.btnEdit.FlatAppearance.BorderSize = 0;
+            this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEdit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
+            this.btnEdit.Location = new System.Drawing.Point(300, 78);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(95, 36);
+            this.btnEdit.TabIndex = 11;
+            this.btnEdit.Text = "EDIT";
+            this.btnEdit.UseVisualStyleBackColor = false;
+            // 
+            // btnStatus
+            // 
+            this.btnStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnStatus.BackColor = System.Drawing.Color.DarkOrange;
+            this.btnStatus.FlatAppearance.BorderSize = 0;
+            this.btnStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnStatus.ForeColor = System.Drawing.Color.White;
+            this.btnStatus.Location = new System.Drawing.Point(405, 78);
+            this.btnStatus.Name = "btnStatus";
+            this.btnStatus.Size = new System.Drawing.Size(155, 36);
+            this.btnStatus.TabIndex = 12;
+            this.btnStatus.Text = "SET UNAVAILABLE";
+            this.btnStatus.UseVisualStyleBackColor = false;
+            // 
+            // btnHardDelete
+            // 
+            this.btnHardDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnHardDelete.BackColor = System.Drawing.Color.IndianRed;
+            this.btnHardDelete.FlatAppearance.BorderSize = 0;
+            this.btnHardDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHardDelete.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnHardDelete.ForeColor = System.Drawing.Color.White;
+            this.btnHardDelete.Location = new System.Drawing.Point(655, 78);
+            this.btnHardDelete.Name = "btnHardDelete";
+            this.btnHardDelete.Size = new System.Drawing.Size(135, 36);
+            this.btnHardDelete.TabIndex = 13;
+            this.btnHardDelete.Text = "HARD DELETE";
+            this.btnHardDelete.UseVisualStyleBackColor = false;
+            this.btnHardDelete.Visible = false;
+            // 
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(245)))), ((int)(((byte)(247)))), ((int)(((byte)(245)))));
             this.panel3.Controls.Add(this.pnladdproduct);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(210, 100);
+            this.panel3.Location = new System.Drawing.Point(210, 125);
             this.panel3.Name = "panel3";
             this.panel3.Padding = new System.Windows.Forms.Padding(15);
-            this.panel3.Size = new System.Drawing.Size(1135, 680);
+            this.panel3.Size = new System.Drawing.Size(990, 575);
             this.panel3.TabIndex = 9;
             // 
             // pnladdproduct
@@ -247,7 +317,8 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.MinimumSize = new System.Drawing.Size(1000, 650);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "Products";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Adlaw POS - Products";
