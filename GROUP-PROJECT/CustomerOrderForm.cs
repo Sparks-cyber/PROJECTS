@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Transactions;
@@ -16,6 +19,7 @@ namespace GROUP_PROJECT
         public CustomerOrderForm()
         {
             InitializeComponent();
+            SetupMenuColumns();
             gridCart.AutoGenerateColumns = true;
             gridCart.DataSource = cart;
             SetupCartColumns();
@@ -43,40 +47,103 @@ namespace GROUP_PROJECT
         private void LoadMenu()
         {
             string search = txtSearch.Text.Trim();
+            List<ProductResult> products;
+
             if (string.IsNullOrWhiteSpace(search))
-                gridMenu.DataSource = db.Adlaw_RetrieveProducts().ToList();
+            {
+                products = db.Adlaw_RetrieveProducts().ToList();
+            }
             else
-                gridMenu.DataSource = db.Adlaw_SearchProducts(search).ToList();
-            HideMenuColumns();
+            {
+                products = db.Adlaw_SearchProducts(search).ToList();
+            }
+
+            DisplayMenu(products);
         }
 
-        private void HideMenuColumns()
+        private void SetupMenuColumns()
         {
-            string[] hidden = { "ProductID", "CategoryID", "ImagePath", "IsDeleted" };
-            foreach (string name in hidden)
+            gridMenu.AutoGenerateColumns = false;
+            gridMenu.Columns.Clear();
+
+            DataGridViewImageColumn imageColumn = new DataGridViewImageColumn();
+            imageColumn.Name = "ProductImage";
+            imageColumn.HeaderText = "IMAGE";
+            imageColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
+            imageColumn.Width = 90;
+            imageColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            gridMenu.Columns.Add(imageColumn);
+
+            gridMenu.Columns.Add("ItemName", "MENU ITEM");
+            gridMenu.Columns.Add("Category", "CATEGORY");
+            gridMenu.Columns.Add("Price", "PRICE");
+            gridMenu.Columns.Add("Stock", "STOCK");
+            gridMenu.Columns["ItemName"].FillWeight = 150;
+            gridMenu.Columns["Category"].FillWeight = 85;
+            gridMenu.Columns["Price"].FillWeight = 65;
+            gridMenu.Columns["Stock"].FillWeight = 55;
+        }
+
+        private void DisplayMenu(List<ProductResult> products)
+        {
+            gridMenu.Rows.Clear();
+
+            foreach (ProductResult product in products)
             {
-                if (gridMenu.Columns[name] != null)
+                Image productImage = null;
+                string imagePath = product.ImagePath;
+
+                if (imagePath == null)
                 {
-                    gridMenu.Columns[name].Visible = false;
+                    imagePath = "";
                 }
-            }
 
-            if (gridMenu.Columns["ItemCode"] != null)
-            {
-                gridMenu.Columns["ItemCode"].HeaderText = "CODE";
-            }
+                string filePath = imagePath;
+                if (!Path.IsPathRooted(filePath))
+                {
+                    filePath = Path.Combine(Application.StartupPath, imagePath);
+                }
 
-            if (gridMenu.Columns["ItemName"] != null)
-            {
-                gridMenu.Columns["ItemName"].HeaderText = "MENU ITEM";
-            }
+                if (File.Exists(filePath))
+                {
+                    using (Image source = Image.FromFile(filePath))
+                    {
+                        productImage = new Bitmap(source, new Size(65, 65));
+                    }
+                }
 
-            if (gridMenu.Columns["Price"] != null)
-            {
-                gridMenu.Columns["Price"].DefaultCellStyle.Format = "₱#,##0.00";
+                int rowIndex = gridMenu.Rows.Add(
+                    productImage,
+                    product.ItemName,
+                    GetCategoryName(product.CategoryID),
+                    "₱" + product.Price.ToString("N2"),
+                    product.Stock
+                );
+
+                gridMenu.Rows[rowIndex].Tag = product;
             }
 
             gridMenu.ClearSelection();
+        }
+
+        private string GetCategoryName(int categoryID)
+        {
+            if (categoryID == 1)
+            {
+                return "Coffee";
+            }
+            else if (categoryID == 2)
+            {
+                return "Matcha";
+            }
+            else if (categoryID == 3)
+            {
+                return "Non Coffee";
+            }
+            else
+            {
+                return "Refresher";
+            }
         }
 
         private void SetupCartColumns()
@@ -84,6 +151,11 @@ namespace GROUP_PROJECT
             if (gridCart.Columns["ProductID"] != null)
             {
                 gridCart.Columns["ProductID"].Visible = false;
+            }
+
+            if (gridCart.Columns["AvailableStock"] != null)
+            {
+                gridCart.Columns["AvailableStock"].Visible = false;
             }
 
             if (gridCart.Columns["ItemCode"] != null)
@@ -113,7 +185,7 @@ namespace GROUP_PROJECT
             ProductResult product = null;
             if (gridMenu.CurrentRow != null)
             {
-                product = gridMenu.CurrentRow.DataBoundItem as ProductResult;
+                product = gridMenu.CurrentRow.Tag as ProductResult;
             }
 
             int quantity = (int)numQuantity.Value;
@@ -147,15 +219,71 @@ namespace GROUP_PROJECT
             if (existing == null)
             {
                 cart.Add(new CartItem { ProductID = product.ProductID, ItemCode = product.ItemCode,
-                    ItemName = product.ItemName, UnitPrice = product.Price, Quantity = quantity });
+                    ItemName = product.ItemName, UnitPrice = product.Price, Quantity = quantity,
+                    AvailableStock = product.Stock });
             }
             else
             {
                 existing.Quantity = newQuantity;
             }
 
+            numQuantity.Value = 1;
             gridCart.Refresh();
             UpdateTotals();
+        }
+
+        private void DecreaseCartQuantity(object sender, EventArgs e)
+        {
+            // Decrease the selected cart quantity.
+            CartItem item = GetSelectedCartItem();
+            if (item == null)
+            {
+                Warn("Select a cart item first.");
+                return;
+            }
+
+            if (item.Quantity > 1)
+            {
+                item.Quantity--;
+            }
+            else
+            {
+                cart.Remove(item);
+            }
+
+            gridCart.Refresh();
+            UpdateTotals();
+        }
+
+        private void IncreaseCartQuantity(object sender, EventArgs e)
+        {
+            // Increase the selected cart quantity.
+            CartItem item = GetSelectedCartItem();
+            if (item == null)
+            {
+                Warn("Select a cart item first.");
+                return;
+            }
+
+            if (item.Quantity >= item.AvailableStock)
+            {
+                Warn("Only " + item.AvailableStock + " item(s) are available.");
+                return;
+            }
+
+            item.Quantity++;
+            gridCart.Refresh();
+            UpdateTotals();
+        }
+
+        private CartItem GetSelectedCartItem()
+        {
+            if (gridCart.CurrentRow == null)
+            {
+                return null;
+            }
+
+            return gridCart.CurrentRow.DataBoundItem as CartItem;
         }
 
         private void RemoveCartItem(object sender, EventArgs e)
@@ -219,6 +347,22 @@ namespace GROUP_PROJECT
             if (numCash.Value < Total)
             {
                 Warn("Cash received is not enough.");
+                return;
+            }
+
+            decimal change = numCash.Value - Total;
+            DialogResult confirmation = MessageBox.Show(
+                "TOTAL PAYMENT: ₱" + Total.ToString("N2") +
+                "\nCASH: ₱" + numCash.Value.ToString("N2") +
+                "\nCHANGE: ₱" + change.ToString("N2") +
+                "\n\nConfirm this order?",
+                "Confirm Payment",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirmation == DialogResult.No)
+            {
                 return;
             }
 

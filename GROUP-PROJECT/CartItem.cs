@@ -8,6 +8,7 @@ namespace GROUP_PROJECT
         public string ItemName { get; set; }
         public decimal UnitPrice { get; set; }
         public int Quantity { get; set; }
+        public int AvailableStock { get; set; }
 
         public decimal Subtotal
         {
