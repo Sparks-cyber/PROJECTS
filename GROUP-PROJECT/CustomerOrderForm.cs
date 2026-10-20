@@ -8,16 +8,6 @@ using System.Windows.Forms;
 
 namespace GROUP_PROJECT
 {
-    public class CartItem
-    {
-        public int ProductID { get; set; }
-        public string ItemCode { get; set; }
-        public string ItemName { get; set; }
-        public decimal UnitPrice { get; set; }
-        public int Quantity { get; set; }
-        public decimal Subtotal { get { return UnitPrice * Quantity; } }
-    }
-
     public partial class CustomerOrderForm : Form
     {
         private readonly AdlawDataContext db = new AdlawDataContext();
