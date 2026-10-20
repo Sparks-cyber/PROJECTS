@@ -171,7 +171,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
             this.label1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
-            this.label1.Location = new System.Drawing.Point(25, 12);
+            this.label1.Location = new System.Drawing.Point(25, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(153, 45);
             this.label1.TabIndex = 4;
@@ -182,7 +182,7 @@
             this.lblSearch.AutoSize = true;
             this.lblSearch.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblSearch.ForeColor = System.Drawing.Color.DimGray;
-            this.lblSearch.Location = new System.Drawing.Point(27, 68);
+            this.lblSearch.Location = new System.Drawing.Point(27, 72);
             this.lblSearch.Name = "lblSearch";
             this.lblSearch.Size = new System.Drawing.Size(103, 13);
             this.lblSearch.TabIndex = 8;
@@ -191,7 +191,7 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.textBox1.Location = new System.Drawing.Point(30, 87);
+            this.textBox1.Location = new System.Drawing.Point(30, 91);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(240, 27);
             this.textBox1.TabIndex = 5;
@@ -204,7 +204,7 @@
             this.btnadd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnadd.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnadd.ForeColor = System.Drawing.Color.White;
-            this.btnadd.Location = new System.Drawing.Point(800, 78);
+            this.btnadd.Location = new System.Drawing.Point(800, 82);
             this.btnadd.Name = "btnadd";
             this.btnadd.Size = new System.Drawing.Size(165, 42);
             this.btnadd.TabIndex = 7;
@@ -217,7 +217,7 @@
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
             this.lblStatus.ForeColor = System.Drawing.Color.DimGray;
-            this.lblStatus.Location = new System.Drawing.Point(222, 12);
+            this.lblStatus.Location = new System.Drawing.Point(598, 15);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(45, 13);
             this.lblStatus.TabIndex = 9;
@@ -231,7 +231,7 @@
             this.cboStatus.Items.AddRange(new object[] {
             "Available",
             "Unavailable"});
-            this.cboStatus.Location = new System.Drawing.Point(225, 29);
+            this.cboStatus.Location = new System.Drawing.Point(600, 34);
             this.cboStatus.Name = "cboStatus";
             this.cboStatus.Size = new System.Drawing.Size(180, 25);
             this.cboStatus.TabIndex = 10;
@@ -244,7 +244,7 @@
             this.btnEdit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnEdit.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
-            this.btnEdit.Location = new System.Drawing.Point(300, 78);
+            this.btnEdit.Location = new System.Drawing.Point(290, 86);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(95, 36);
             this.btnEdit.TabIndex = 11;
@@ -259,7 +259,7 @@
             this.btnStatus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnStatus.ForeColor = System.Drawing.Color.White;
-            this.btnStatus.Location = new System.Drawing.Point(405, 78);
+            this.btnStatus.Location = new System.Drawing.Point(395, 86);
             this.btnStatus.Name = "btnStatus";
             this.btnStatus.Size = new System.Drawing.Size(155, 36);
             this.btnStatus.TabIndex = 12;
@@ -274,7 +274,7 @@
             this.btnHardDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHardDelete.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnHardDelete.ForeColor = System.Drawing.Color.White;
-            this.btnHardDelete.Location = new System.Drawing.Point(655, 78);
+            this.btnHardDelete.Location = new System.Drawing.Point(570, 86);
             this.btnHardDelete.Name = "btnHardDelete";
             this.btnHardDelete.Size = new System.Drawing.Size(135, 36);
             this.btnHardDelete.TabIndex = 13;

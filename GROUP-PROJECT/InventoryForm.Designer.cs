@@ -61,7 +61,7 @@ namespace GROUP_PROJECT
             this.pnlRestock.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             this.pnlRestock.BackColor = System.Drawing.Color.White;
             this.pnlRestock.Location = new System.Drawing.Point(24, 118);
-            this.pnlRestock.Size = new System.Drawing.Size(916, 142);
+            this.pnlRestock.Size = new System.Drawing.Size(942, 142);
             this.lblProduct.AutoSize = true;
             this.lblProduct.Text = "PRODUCT";
             this.lblProduct.Location = new System.Drawing.Point(22, 20);
@@ -113,7 +113,7 @@ namespace GROUP_PROJECT
 
             this.lblSummary.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.lblSummary.ForeColor = System.Drawing.Color.DimGray;
-            this.lblSummary.Location = new System.Drawing.Point(564, 284);
+            this.lblSummary.Location = new System.Drawing.Point(590, 284);
             this.lblSummary.Size = new System.Drawing.Size(376, 25);
             this.lblSummary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 
@@ -135,12 +135,12 @@ namespace GROUP_PROJECT
             this.gridInventory.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(225, 237, 229);
             this.gridInventory.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(48, 70, 57);
             this.gridInventory.Location = new System.Drawing.Point(24, 318);
-            this.gridInventory.Size = new System.Drawing.Size(916, 296);
+            this.gridInventory.Size = new System.Drawing.Size(942, 358);
 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 245);
-            this.ClientSize = new System.Drawing.Size(1200, 700);
+            this.ClientSize = new System.Drawing.Size(990, 700);
             this.Controls.Add(this.gridInventory);
             this.Controls.Add(this.lblSummary);
             this.lblStockTitle.AutoSize = true;

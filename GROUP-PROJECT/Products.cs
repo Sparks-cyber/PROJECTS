@@ -128,21 +128,25 @@ namespace GROUP_PROJECT
         private void Dashboard_Click(object sender, EventArgs e)
         {
             // Show inventory inside the main content panel.
+            SetSelectedMenu(button1);
             OpenMenuForm(new InventoryForm(), "Inventory");
         }
 
         private void NewOrder_Click(object sender, EventArgs e)
         {
             // Show sales inside the main content panel.
+            SetSelectedMenu(btnneworder);
             OpenMenuForm(new SalesForm(), "Sales Report");
         }
 
         private void ProductsMenu_Click(object sender, EventArgs e)
         {
             // Return to product management.
+            SetSelectedMenu(button3);
             CloseMenuForm();
             label1.Text = "Products";
             SetProductToolsVisible(true);
+            panel3.Padding = new Padding(15);
             grid.Visible = true;
             grid.BringToFront();
             UpdateProductView();
@@ -155,6 +159,7 @@ namespace GROUP_PROJECT
             openMenuForm = menuForm;
             label1.Text = title;
             SetProductToolsVisible(false);
+            panel3.Padding = new Padding(0);
             grid.Visible = false;
 
             openMenuForm.TopLevel = false;
@@ -193,6 +198,20 @@ namespace GROUP_PROJECT
                 btnHardDelete.Visible = false;
             else if (showingDeletedProducts)
                 btnHardDelete.Visible = true;
+        }
+
+        private void SetSelectedMenu(Button selectedButton)
+        {
+            // Highlight only the active sidebar menu.
+            button1.BackColor = Color.FromArgb(239, 243, 240);
+            button1.ForeColor = Color.FromArgb(48, 70, 57);
+            btnneworder.BackColor = Color.FromArgb(239, 243, 240);
+            btnneworder.ForeColor = Color.FromArgb(48, 70, 57);
+            button3.BackColor = Color.FromArgb(239, 243, 240);
+            button3.ForeColor = Color.FromArgb(48, 70, 57);
+
+            selectedButton.BackColor = Color.FromArgb(77, 108, 88);
+            selectedButton.ForeColor = Color.White;
         }
 
         private void StatusChanged(object sender, EventArgs e)

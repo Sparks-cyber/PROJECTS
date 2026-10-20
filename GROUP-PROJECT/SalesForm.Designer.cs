@@ -64,7 +64,7 @@ namespace GROUP_PROJECT
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 0);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(1004, 100);
+            this.pnlHeader.Size = new System.Drawing.Size(990, 100);
             this.pnlHeader.TabIndex = 0;
             //
             // btnRefresh
@@ -75,7 +75,7 @@ namespace GROUP_PROJECT
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnRefresh.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnRefresh.ForeColor = System.Drawing.Color.White;
-            this.btnRefresh.Location = new System.Drawing.Point(835, 31);
+            this.btnRefresh.Location = new System.Drawing.Point(826, 31);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(140, 40);
             this.btnRefresh.TabIndex = 0;
@@ -111,7 +111,7 @@ namespace GROUP_PROJECT
             this.pnlOrders.Controls.Add(this.lblOrdersCaption);
             this.pnlOrders.Location = new System.Drawing.Point(24, 122);
             this.pnlOrders.Name = "pnlOrders";
-            this.pnlOrders.Size = new System.Drawing.Size(296, 105);
+            this.pnlOrders.Size = new System.Drawing.Size(300, 105);
             this.pnlOrders.TabIndex = 1;
             //
             // lblOrdersValue
@@ -142,7 +142,7 @@ namespace GROUP_PROJECT
             this.pnlItems.Controls.Add(this.lblItemsCaption);
             this.pnlItems.Location = new System.Drawing.Point(342, 122);
             this.pnlItems.Name = "pnlItems";
-            this.pnlItems.Size = new System.Drawing.Size(296, 105);
+            this.pnlItems.Size = new System.Drawing.Size(300, 105);
             this.pnlItems.TabIndex = 2;
             //
             // lblItemsValue
@@ -173,7 +173,7 @@ namespace GROUP_PROJECT
             this.pnlRevenue.Controls.Add(this.lblRevenueCaption);
             this.pnlRevenue.Location = new System.Drawing.Point(660, 122);
             this.pnlRevenue.Name = "pnlRevenue";
-            this.pnlRevenue.Size = new System.Drawing.Size(320, 105);
+            this.pnlRevenue.Size = new System.Drawing.Size(306, 105);
             this.pnlRevenue.TabIndex = 3;
             //
             // lblRevenueValue
@@ -212,7 +212,7 @@ namespace GROUP_PROJECT
             //
             this.lblSummary.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             this.lblSummary.ForeColor = System.Drawing.Color.DimGray;
-            this.lblSummary.Location = new System.Drawing.Point(604, 252);
+            this.lblSummary.Location = new System.Drawing.Point(590, 252);
             this.lblSummary.Name = "lblSummary";
             this.lblSummary.Size = new System.Drawing.Size(376, 25);
             this.lblSummary.TabIndex = 5;
@@ -239,7 +239,7 @@ namespace GROUP_PROJECT
             this.gridSales.RowHeadersVisible = false;
             this.gridSales.RowTemplate.Height = 38;
             this.gridSales.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSales.Size = new System.Drawing.Size(956, 346);
+            this.gridSales.Size = new System.Drawing.Size(942, 390);
             this.gridSales.TabIndex = 6;
             //
             // SalesForm
@@ -247,7 +247,7 @@ namespace GROUP_PROJECT
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 245);
-            this.ClientSize = new System.Drawing.Size(1200, 700);
+            this.ClientSize = new System.Drawing.Size(990, 700);
             this.Controls.Add(this.gridSales);
             this.Controls.Add(this.lblSummary);
             this.Controls.Add(this.lblHistory);

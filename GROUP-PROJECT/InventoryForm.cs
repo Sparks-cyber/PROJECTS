@@ -104,6 +104,7 @@ namespace GROUP_PROJECT
             imageColumn.HeaderText = "IMAGE";
             imageColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
             imageColumn.FillWeight = 55;
+            imageColumn.DefaultCellStyle.NullValue = null;
             gridInventory.Columns.Add(imageColumn);
             gridInventory.RowTemplate.Height = 60;
         }
