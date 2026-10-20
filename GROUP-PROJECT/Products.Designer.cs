@@ -20,8 +20,8 @@
 
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Button btnadd;
-        private System.Windows.Forms.Button btnAvailable;
-        private System.Windows.Forms.Button btnUnavailable;
+        private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.ComboBox cboStatus;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Button btnStatus;
         private System.Windows.Forms.Button btnHardDelete;
@@ -51,8 +51,8 @@
             this.lblSearch = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btnadd = new System.Windows.Forms.Button();
-            this.btnAvailable = new System.Windows.Forms.Button();
-            this.btnUnavailable = new System.Windows.Forms.Button();
+            this.lblStatus = new System.Windows.Forms.Label();
+            this.cboStatus = new System.Windows.Forms.ComboBox();
             this.btnEdit = new System.Windows.Forms.Button();
             this.btnStatus = new System.Windows.Forms.Button();
             this.btnHardDelete = new System.Windows.Forms.Button();
@@ -155,8 +155,8 @@
             this.panel2.Controls.Add(this.lblSearch);
             this.panel2.Controls.Add(this.textBox1);
             this.panel2.Controls.Add(this.btnadd);
-            this.panel2.Controls.Add(this.btnAvailable);
-            this.panel2.Controls.Add(this.btnUnavailable);
+            this.panel2.Controls.Add(this.lblStatus);
+            this.panel2.Controls.Add(this.cboStatus);
             this.panel2.Controls.Add(this.btnEdit);
             this.panel2.Controls.Add(this.btnStatus);
             this.panel2.Controls.Add(this.btnHardDelete);
@@ -212,33 +212,29 @@
             this.btnadd.UseVisualStyleBackColor = false;
             this.btnadd.Click += new System.EventHandler(this.button2_Click);
             // 
-            // btnAvailable
+            // lblStatus
             // 
-            this.btnAvailable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(77)))), ((int)(((byte)(108)))), ((int)(((byte)(88)))));
-            this.btnAvailable.FlatAppearance.BorderSize = 0;
-            this.btnAvailable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAvailable.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnAvailable.ForeColor = System.Drawing.Color.White;
-            this.btnAvailable.Location = new System.Drawing.Point(225, 18);
-            this.btnAvailable.Name = "btnAvailable";
-            this.btnAvailable.Size = new System.Drawing.Size(125, 36);
-            this.btnAvailable.TabIndex = 9;
-            this.btnAvailable.Text = "AVAILABLE";
-            this.btnAvailable.UseVisualStyleBackColor = false;
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 8F, System.Drawing.FontStyle.Bold);
+            this.lblStatus.ForeColor = System.Drawing.Color.DimGray;
+            this.lblStatus.Location = new System.Drawing.Point(222, 12);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(45, 13);
+            this.lblStatus.TabIndex = 9;
+            this.lblStatus.Text = "STATUS";
             // 
-            // btnUnavailable
+            // cboStatus
             // 
-            this.btnUnavailable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(243)))), ((int)(((byte)(240)))));
-            this.btnUnavailable.FlatAppearance.BorderSize = 0;
-            this.btnUnavailable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUnavailable.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnUnavailable.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(48)))), ((int)(((byte)(70)))), ((int)(((byte)(57)))));
-            this.btnUnavailable.Location = new System.Drawing.Point(360, 18);
-            this.btnUnavailable.Name = "btnUnavailable";
-            this.btnUnavailable.Size = new System.Drawing.Size(135, 36);
-            this.btnUnavailable.TabIndex = 10;
-            this.btnUnavailable.Text = "UNAVAILABLE";
-            this.btnUnavailable.UseVisualStyleBackColor = false;
+            this.cboStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboStatus.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cboStatus.FormattingEnabled = true;
+            this.cboStatus.Items.AddRange(new object[] {
+            "Available",
+            "Unavailable"});
+            this.cboStatus.Location = new System.Drawing.Point(225, 29);
+            this.cboStatus.Name = "cboStatus";
+            this.cboStatus.Size = new System.Drawing.Size(180, 25);
+            this.cboStatus.TabIndex = 10;
             // 
             // btnEdit
             // 

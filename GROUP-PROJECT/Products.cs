@@ -22,11 +22,12 @@ namespace GROUP_PROJECT
             btnneworder.Click += NewOrder_Click;
             button4.Click += Logout_Click;
 
-            btnAvailable.Click += ShowAvailableProducts;
-            btnUnavailable.Click += ShowUnavailableProducts;
+            cboStatus.SelectedIndexChanged += StatusChanged;
             btnEdit.Click += EditSelectedProduct;
             btnStatus.Click += ChangeSelectedStatus;
             btnHardDelete.Click += HardDeleteSelectedProduct;
+
+            cboStatus.SelectedIndex = 0;
         }
 
         private void Products_Load(object sender, EventArgs e)
@@ -143,17 +144,14 @@ namespace GROUP_PROJECT
             Retrieve();
         }
 
-        private void ShowAvailableProducts(object sender, EventArgs e)
+        private void StatusChanged(object sender, EventArgs e)
         {
-            // Show products that customers can order.
-            showingDeletedProducts = false;
-            UpdateProductView();
-        }
+            // Show products based on the selected availability status.
+            if (cboStatus.SelectedIndex == 1)
+                showingDeletedProducts = true;
+            else
+                showingDeletedProducts = false;
 
-        private void ShowUnavailableProducts(object sender, EventArgs e)
-        {
-            // Show products that are currently unavailable.
-            showingDeletedProducts = true;
             UpdateProductView();
         }
 
@@ -167,19 +165,11 @@ namespace GROUP_PROJECT
             if (showingDeletedProducts)
             {
                 btnStatus.Text = "SET AVAILABLE";
-                btnAvailable.BackColor = Color.FromArgb(239, 243, 240);
-                btnAvailable.ForeColor = Color.FromArgb(48, 70, 57);
-                btnUnavailable.BackColor = Color.FromArgb(77, 108, 88);
-                btnUnavailable.ForeColor = Color.White;
                 DisplayProducts(db.Adlaw_RetrieveDeletedProducts().ToList());
             }
             else
             {
                 btnStatus.Text = "SET UNAVAILABLE";
-                btnAvailable.BackColor = Color.FromArgb(77, 108, 88);
-                btnAvailable.ForeColor = Color.White;
-                btnUnavailable.BackColor = Color.FromArgb(239, 243, 240);
-                btnUnavailable.ForeColor = Color.FromArgb(48, 70, 57);
                 Retrieve();
             }
         }
