@@ -16,7 +16,7 @@ namespace GROUP_PROJECT
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            // Release the database context when the form closes.
+            // Release the global database context when the form closes.
             db.Dispose();
             base.OnFormClosed(e);
         }

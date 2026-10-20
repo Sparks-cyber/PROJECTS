@@ -8,7 +8,7 @@ namespace GROUP_PROJECT
 {
     public partial class Products : Form
     {
-        private AdlawDataContext db;
+        private readonly AdlawDataContext db = new AdlawDataContext();
         private DataGridView grid;
         private bool showingDeletedProducts;
 
@@ -28,20 +28,13 @@ namespace GROUP_PROJECT
         private void Products_Load(object sender, EventArgs e)
         {
             // Load the active products.
-            db = new AdlawDataContext();
-
             Retrieve();
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
-            // Release the database context when the form closes.
-            if (db != null)
-            {
-                db.Dispose();
-                db = null;
-            }
-
+            // Release the global database context when the form closes.
+            db.Dispose();
             base.OnFormClosed(e);
         }
 

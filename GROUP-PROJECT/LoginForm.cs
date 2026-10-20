@@ -7,12 +7,22 @@ namespace GROUP_PROJECT
 {
     public partial class LoginForm : Form
     {
+        private readonly AdlawDataContext db = new AdlawDataContext();
+
         public AuthenticationResult LoggedInUser { get; private set; }
 
         public LoginForm()
         {
             InitializeComponent();
+            db.CommandTimeout = 10;
             this.StartPosition = FormStartPosition.CenterScreen;
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            // Release the global database context when the form closes.
+            db.Dispose();
+            base.OnFormClosed(e);
         }
 
         private void btnShow_Click(object sender, EventArgs e)
@@ -56,12 +66,8 @@ namespace GROUP_PROJECT
 
                 AuthenticationResult user = await Task.Run(() =>
                 {
-                    using (AdlawDataContext db = new AdlawDataContext())
-                    {
-                        db.CommandTimeout = 10;
-                        return db.Adlaw_Authenticate(username, passwordHash)
-                            .FirstOrDefault();
-                    }
+                    return db.Adlaw_Authenticate(username, passwordHash)
+                        .FirstOrDefault();
                 });
 
                 if (user == null)
