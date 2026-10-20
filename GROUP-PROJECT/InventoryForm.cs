@@ -47,6 +47,7 @@ namespace GROUP_PROJECT
                 BackColor = Color.FromArgb(245, 247, 245)
             };
             Controls.Add(content);
+            header.BringToFront();
 
             TableLayoutPanel layout = new TableLayoutPanel
             {
@@ -167,7 +168,15 @@ namespace GROUP_PROJECT
 
         private void InventoryForm_Load(object sender, EventArgs e)
         {
-            RefreshInventory();
+            try
+            {
+                RefreshInventory();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to load Inventory.\n\n" + ex.Message,
+                    "Adlaw POS", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void RefreshInventory()
