@@ -27,6 +27,7 @@ namespace GROUP_PROJECT
 
         private void Products_Load(object sender, EventArgs e)
         {
+            // Load the active products.
             db = new AdlawDataContext();
 
             Retrieve();
@@ -34,6 +35,7 @@ namespace GROUP_PROJECT
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Release the database context when the form closes.
             if (db != null)
             {
                 db.Dispose();
@@ -53,6 +55,7 @@ namespace GROUP_PROJECT
 
         private void Search(object sender, EventArgs e)
         {
+            // Filter active products using the search text.
             if (showingDeletedProducts)
             {
                 return;
@@ -77,6 +80,7 @@ namespace GROUP_PROJECT
 
         private void button2_Click(object sender, EventArgs e)
         {
+            // Open the form for adding a product.
             using (AddProductForm add = new AddProductForm())
             {
                 if (add.ShowDialog(this) != DialogResult.OK)
@@ -106,6 +110,7 @@ namespace GROUP_PROJECT
 
         private void Dashboard_Click(object sender, EventArgs e)
         {
+            // Open the inventory screen.
             using (InventoryForm inventory = new InventoryForm())
             {
                 inventory.ShowDialog(this);
@@ -116,6 +121,7 @@ namespace GROUP_PROJECT
 
         private void NewOrder_Click(object sender, EventArgs e)
         {
+            // Open the administrator sales screen.
             using (SalesForm sales = new SalesForm())
             {
                 sales.ShowDialog(this);
@@ -126,6 +132,7 @@ namespace GROUP_PROJECT
 
         private void ShowDeletedProducts(object sender, EventArgs e)
         {
+            // Switch between active and deleted products.
             showingDeletedProducts = !showingDeletedProducts;
             if (showingDeletedProducts)
                 button5.Text = "ACTIVE PRODUCTS";
@@ -144,6 +151,7 @@ namespace GROUP_PROJECT
 
         private void Logout_Click(object sender, EventArgs e)
         {
+            // Confirm before logging out.
             DialogResult result =
                 MessageBox.Show(
                     "Are you sure you want to logout?",
@@ -453,6 +461,7 @@ namespace GROUP_PROJECT
 
         private void Grid_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            // Run the selected product row action.
             if (e.RowIndex < 0)
             {
                 return;

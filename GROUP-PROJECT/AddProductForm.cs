@@ -93,6 +93,7 @@ namespace GROUP_PROJECT
             object sender,
             EventArgs e)
         {
+            // Select an image for the product.
             using (OpenFileDialog dialog =
                 new OpenFileDialog())
             {
@@ -114,6 +115,7 @@ namespace GROUP_PROJECT
             object sender,
             EventArgs e)
         {
+            // Validate and submit the product details.
             if (editingProduct && ItemCode == "")
             {
                 MessageBox.Show(
@@ -187,6 +189,7 @@ namespace GROUP_PROJECT
             object sender,
             EventArgs e)
         {
+            // Close without saving the product.
             DialogResult = DialogResult.Cancel;
 
             Close();

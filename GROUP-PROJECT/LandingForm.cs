@@ -9,12 +9,14 @@ namespace GROUP_PROJECT
 
         private void OrderNow(object sender, EventArgs e)
         {
+            // Open the customer ordering screen.
             using (CustomerOrderForm order = new CustomerOrderForm())
                 order.ShowDialog(this);
         }
 
         private void AdminLogin(object sender, EventArgs e)
         {
+            // Open the administrator login screen.
             Form1 login = new Form1();
             login.FormClosed += delegate { this.Show(); };
             login.Show();

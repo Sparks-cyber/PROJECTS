@@ -14,12 +14,14 @@ namespace GROUP_PROJECT
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Release the database context when the form closes.
             db.Dispose();
             base.OnFormClosed(e);
         }
 
         private void InventoryForm_Load(object sender, EventArgs e)
         {
+            // Load the current product inventory.
             try { RefreshInventory(); }
             catch (Exception ex) { ShowError("Unable to load Inventory.", ex); }
         }
@@ -45,6 +47,7 @@ namespace GROUP_PROJECT
 
         private void ProductChanged(object sender, EventArgs e)
         {
+            // Show the selected product stock.
             InventoryResult product = cboProduct.SelectedItem as InventoryResult;
             if (product == null)
                 lblProductDetails.Text = "No product available.";
@@ -54,6 +57,7 @@ namespace GROUP_PROJECT
 
         private void RestockProduct(object sender, EventArgs e)
         {
+            // Add stock to the selected product.
             InventoryResult product = cboProduct.SelectedItem as InventoryResult;
             if (product == null)
             {

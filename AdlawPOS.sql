@@ -103,7 +103,6 @@ CREATE TABLE SaleItems
 );
 GO
 
--- Retrieve all active products
 -- Authenticate an active user account
 CREATE PROCEDURE Adlaw_Authenticate
     @Username nvarchar(50),
@@ -112,6 +111,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Match the username and hashed password
     SELECT UserID, Username, DisplayName, Role
     FROM UserAccounts
     WHERE Username = @Username
@@ -126,6 +126,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Return products that are not deleted
     SELECT ProductID, ItemCode, ItemName, CategoryID,
            Price, Stock, ImagePath, IsDeleted
     FROM Products
@@ -140,6 +141,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Find active products with a matching name
     SELECT ProductID, ItemCode, ItemName, CategoryID,
            Price, Stock, ImagePath, IsDeleted
     FROM Products
@@ -154,6 +156,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Return products marked as deleted
     SELECT ProductID, ItemCode, ItemName, CategoryID,
            Price, Stock, ImagePath, IsDeleted
     FROM Products
@@ -203,6 +206,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Save the edited product details
     UPDATE Products
     SET ItemCode = @ItemCode,
         ItemName = @ItemName,
@@ -224,6 +228,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Hide the product from active lists
     UPDATE Products
     SET IsDeleted = 1
     WHERE ProductID = @ProductID
@@ -240,6 +245,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Return the product to active lists
     UPDATE Products
     SET IsDeleted = 0
     WHERE ProductID = @ProductID
@@ -256,6 +262,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Remove an already deleted product permanently
     DELETE FROM Products
     WHERE ProductID = @ProductID
       AND IsDeleted = 1;
@@ -326,6 +333,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Start an empty sale for the customer cart
     INSERT INTO Sales (TotalAmount)
     VALUES (0);
 
@@ -350,6 +358,7 @@ BEGIN
         UnitPrice decimal(18, 2)
     );
 
+    -- Reduce stock only when enough quantity remains
     UPDATE Products
     SET Stock = Stock - @Quantity
     OUTPUT inserted.ProductID, inserted.ItemCode,
@@ -385,6 +394,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Return every saved sale item
     SELECT S.SaleID, S.SaleDate, SI.ItemCode, SI.ItemName,
            SI.Quantity, SI.UnitPrice, SI.Subtotal
     FROM Sales S
@@ -398,6 +408,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Return stock for every active product
     SELECT ProductID, ItemCode, ItemName, Stock
     FROM Products
     WHERE IsDeleted = 0;
@@ -412,6 +423,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Increase the selected product stock
     UPDATE Products
     SET Stock = Stock + @Quantity
     WHERE ProductID = @ProductID

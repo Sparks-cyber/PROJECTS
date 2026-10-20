@@ -23,13 +23,22 @@ namespace GROUP_PROJECT
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Release the database context when the form closes.
             db.Dispose();
             base.OnFormClosed(e);
         }
 
-        private void CustomerOrderForm_Load(object sender, EventArgs e) { LoadMenu(); }
+        private void CustomerOrderForm_Load(object sender, EventArgs e)
+        {
+            // Load the customer menu.
+            LoadMenu();
+        }
 
-        private void SearchMenu(object sender, EventArgs e) { LoadMenu(); }
+        private void SearchMenu(object sender, EventArgs e)
+        {
+            // Refresh the menu using the search text.
+            LoadMenu();
+        }
 
         private void LoadMenu()
         {
@@ -71,6 +80,7 @@ namespace GROUP_PROJECT
 
         private void AddToCart(object sender, EventArgs e)
         {
+            // Add the selected menu item to the cart.
             ProductResult product = null;
             if (gridMenu.CurrentRow != null)
                 product = gridMenu.CurrentRow.DataBoundItem as ProductResult;
@@ -95,6 +105,7 @@ namespace GROUP_PROJECT
 
         private void RemoveCartItem(object sender, EventArgs e)
         {
+            // Remove the selected item from the cart.
             CartItem item = null;
             if (gridCart.CurrentRow != null)
                 item = gridCart.CurrentRow.DataBoundItem as CartItem;
@@ -102,7 +113,11 @@ namespace GROUP_PROJECT
             UpdateTotals();
         }
 
-        private void CashChanged(object sender, EventArgs e) { UpdateTotals(); }
+        private void CashChanged(object sender, EventArgs e)
+        {
+            // Recalculate the customer's change.
+            UpdateTotals();
+        }
 
         private decimal Total { get { return cart.Sum(item => item.Subtotal); } }
 
@@ -115,6 +130,7 @@ namespace GROUP_PROJECT
 
         private void Checkout(object sender, EventArgs e)
         {
+            // Save the order and display its receipt.
             if (cart.Count == 0) { Warn("Add at least one item to the cart."); return; }
             if (numCash.Value < Total) { Warn("Cash received is not enough."); return; }
 

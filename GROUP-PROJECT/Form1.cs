@@ -17,6 +17,7 @@ namespace GROUP_PROJECT
 
         private void btnShow_Click(object sender, EventArgs e)
         {
+            // Show the entered password.
             if (txtPassword.PasswordChar == '•')
             {
                 btnHide.BringToFront();
@@ -26,6 +27,7 @@ namespace GROUP_PROJECT
 
         private void btnHide_Click(object sender, EventArgs e)
         {
+            // Hide the entered password.
             if (txtPassword.PasswordChar == '\0')
             {
                 btnShow.BringToFront();
@@ -35,6 +37,7 @@ namespace GROUP_PROJECT
 
         private async void btnlogin_Click(object sender, EventArgs e)
         {
+            // Validate the administrator login.
             string username = textBox1.Text.Trim();
             string password = txtPassword.Text;
 
@@ -96,6 +99,7 @@ namespace GROUP_PROJECT
 
         private void txtPassword_KeyDown(object sender, KeyEventArgs e)
         {
+            // Submit the login when Enter is pressed.
             if (e.KeyCode == Keys.Enter)
             {
                 e.SuppressKeyPress = true;
@@ -105,6 +109,7 @@ namespace GROUP_PROJECT
 
         private void Products_FormClosed(object sender, FormClosedEventArgs e)
         {
+            // Close the login after the dashboard closes.
             txtPassword.Clear();
             this.Close();
         }

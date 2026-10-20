@@ -14,12 +14,14 @@ namespace GROUP_PROJECT
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Release the database context when the form closes.
             db.Dispose();
             base.OnFormClosed(e);
         }
 
         private void SalesForm_Load(object sender, EventArgs e)
         {
+            // Load products and sales history.
             try { RefreshData(); }
             catch (Exception ex) { ShowError("Unable to load Sales.", ex); }
         }
@@ -45,6 +47,7 @@ namespace GROUP_PROJECT
 
         private void ProductChanged(object sender, EventArgs e)
         {
+            // Show the selected product details.
             ProductResult product = cboProduct.SelectedItem as ProductResult;
             if (product == null)
                 lblDetails.Text = "No product available.";
@@ -55,6 +58,7 @@ namespace GROUP_PROJECT
 
         private void CompleteSale(object sender, EventArgs e)
         {
+            // Save a sale and reduce its product stock.
             ProductResult product = cboProduct.SelectedItem as ProductResult;
             int quantity = (int)numQuantity.Value;
             if (product == null || quantity > product.Stock)
