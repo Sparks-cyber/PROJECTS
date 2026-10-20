@@ -70,7 +70,7 @@ namespace GROUP_PROJECT
             imageColumn.Name = "ProductImage";
             imageColumn.HeaderText = "IMAGE";
             imageColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
-            imageColumn.Width = 90;
+            imageColumn.Width = 62;
             imageColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             gridMenu.Columns.Add(imageColumn);
 
@@ -78,10 +78,10 @@ namespace GROUP_PROJECT
             gridMenu.Columns.Add("Category", "CATEGORY");
             gridMenu.Columns.Add("Price", "PRICE");
             gridMenu.Columns.Add("Stock", "STOCK");
-            gridMenu.Columns["ItemName"].FillWeight = 150;
-            gridMenu.Columns["Category"].FillWeight = 85;
-            gridMenu.Columns["Price"].FillWeight = 65;
-            gridMenu.Columns["Stock"].FillWeight = 55;
+            gridMenu.Columns["ItemName"].FillWeight = 135;
+            gridMenu.Columns["Category"].FillWeight = 75;
+            gridMenu.Columns["Price"].FillWeight = 60;
+            gridMenu.Columns["Stock"].FillWeight = 45;
         }
 
         private void DisplayMenu(List<ProductResult> products)
@@ -108,7 +108,7 @@ namespace GROUP_PROJECT
                 {
                     using (Image source = Image.FromFile(filePath))
                     {
-                        productImage = new Bitmap(source, new Size(65, 65));
+                        productImage = new Bitmap(source, new Size(45, 45));
                     }
                 }
 
@@ -188,7 +188,8 @@ namespace GROUP_PROJECT
                 product = gridMenu.CurrentRow.Tag as ProductResult;
             }
 
-            int quantity = (int)numQuantity.Value;
+            // Every Add to Cart click adds one item.
+            int quantity = 1;
             if (product == null)
             {
                 Warn("Select a menu item first.");
@@ -227,7 +228,6 @@ namespace GROUP_PROJECT
                 existing.Quantity = newQuantity;
             }
 
-            numQuantity.Value = 1;
             gridCart.Refresh();
             UpdateTotals();
         }
@@ -388,7 +388,6 @@ namespace GROUP_PROJECT
                 string receipt = BuildReceipt(saleID, paid);
                 cart.Clear();
                 numCash.Value = 0;
-                numQuantity.Value = 1;
                 UpdateTotals();
                 LoadMenu();
 
