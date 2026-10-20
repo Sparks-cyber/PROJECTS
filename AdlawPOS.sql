@@ -10,7 +10,7 @@ GO
 CREATE TABLE Categories
 (
     CategoryID int IDENTITY(1, 1) PRIMARY KEY,
-    CategoryName nvarchar(50) NOT NULL UNIQUE
+    CategoryName varchar(50) NOT NULL UNIQUE
 );
 GO
 
@@ -27,10 +27,10 @@ GO
 CREATE TABLE UserAccounts
 (
     UserID int IDENTITY(1, 1) PRIMARY KEY,
-    Username nvarchar(50) NOT NULL UNIQUE,
+    Username varchar(50) NOT NULL UNIQUE,
     PasswordHash char(64) NOT NULL,
-    DisplayName nvarchar(100) NOT NULL,
-    Role nvarchar(20) NOT NULL,
+    DisplayName varchar(100) NOT NULL,
+    Role varchar(20) NOT NULL,
     IsActive bit NOT NULL DEFAULT (1)
 );
 GO
@@ -48,12 +48,12 @@ GO
 CREATE TABLE Products
 (
     ProductID int IDENTITY(1, 1) PRIMARY KEY,
-    ItemCode nvarchar(50) NOT NULL UNIQUE,
-    ItemName nvarchar(150) NOT NULL,
+    ItemCode varchar(50) UNIQUE,
+    ItemName varchar(150) NOT NULL,
     CategoryID int NOT NULL,
     Price decimal(18, 2) NOT NULL,
     Stock int NOT NULL,
-    ImagePath nvarchar(500) NULL,
+    ImagePath varchar(500) NULL,
     IsDeleted bit NOT NULL DEFAULT (0),
 
     CONSTRAINT FK_Products_Categories
@@ -83,8 +83,8 @@ CREATE TABLE SaleItems
     SaleItemID int IDENTITY(1, 1) PRIMARY KEY,
     SaleID int NOT NULL,
     ProductID int NULL,
-    ItemCode nvarchar(50) NOT NULL,
-    ItemName nvarchar(150) NOT NULL,
+    ItemCode varchar(50) NOT NULL,
+    ItemName varchar(150) NOT NULL,
     Quantity int NOT NULL,
     UnitPrice decimal(18, 2) NOT NULL,
     Subtotal decimal(18, 2) NOT NULL,
@@ -105,7 +105,7 @@ GO
 
 -- Authenticate an active user account
 CREATE PROCEDURE Adlaw_Authenticate
-    @Username nvarchar(50),
+    @Username varchar(50),
     @PasswordHash char(64)
 AS
 BEGIN
@@ -132,7 +132,7 @@ GO
 
 -- Search active products by item name
 CREATE PROCEDURE Adlaw_SearchProducts
-    @ItemName nvarchar(150)
+    @ItemName varchar(150)
 AS
 BEGIN
     -- Find active products with a matching name
@@ -158,24 +158,23 @@ GO
 
 -- Add a new product
 CREATE PROCEDURE Adlaw_AddProduct
-    @ItemName nvarchar(150),
+    @ItemName varchar(150),
     @CategoryID int,
     @Price decimal(18, 2),
     @Stock int,
-    @ImagePath nvarchar(500)
+    @ImagePath varchar(500)
 AS
 BEGIN
-    -- Use a temporary unique code until the identity value is available
+    -- Add the product without an item code
     INSERT INTO Products
-        (ItemCode, ItemName, CategoryID, Price, Stock, ImagePath, IsDeleted)
+        (ItemName, CategoryID, Price, Stock, ImagePath, IsDeleted)
     VALUES
-        (CONCAT('TEMP-', CONVERT(nvarchar(36), NEWID())),
-         @ItemName, @CategoryID, @Price, @Stock, @ImagePath, 0);
+        (@ItemName, @CategoryID, @Price, @Stock, @ImagePath, 0);
 
-    -- Replace the temporary code with the final automatic item code
+    -- Create the item code from the new product ID
     UPDATE Products
-    SET ItemCode = 'PRD-' + RIGHT('000000' + CONVERT(nvarchar(6), ProductID), 6)
-    WHERE ProductID = CONVERT(int, SCOPE_IDENTITY());
+    SET ItemCode = 'PRD-' + CAST(ProductID AS varchar(10))
+    WHERE ProductID = SCOPE_IDENTITY();
 
 END;
 GO
@@ -183,12 +182,12 @@ GO
 -- Update an active product
 CREATE PROCEDURE Adlaw_UpdateProduct
     @ProductID int,
-    @ItemCode nvarchar(50),
-    @ItemName nvarchar(150),
+    @ItemCode varchar(50),
+    @ItemName varchar(150),
     @CategoryID int,
     @Price decimal(18, 2),
     @Stock int,
-    @ImagePath nvarchar(500)
+    @ImagePath varchar(500)
 AS
 BEGIN
     -- Save the edited product details
