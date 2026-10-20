@@ -43,6 +43,7 @@ namespace GROUP_PROJECT
         public string ItemCode { get; set; }
         public string ItemName { get; set; }
         public int Stock { get; set; }
+        public string ImagePath { get; set; }
 
         public string DisplayName { get; set; }
     }

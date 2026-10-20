@@ -11,6 +11,7 @@ namespace GROUP_PROJECT
         private readonly AdlawDataContext db = new AdlawDataContext();
         private DataGridView grid;
         private bool showingDeletedProducts;
+        private Form openMenuForm;
 
         public Products()
         {
@@ -20,6 +21,7 @@ namespace GROUP_PROJECT
 
             button1.Click += Dashboard_Click;
             btnneworder.Click += NewOrder_Click;
+            button3.Click += ProductsMenu_Click;
             button4.Click += Logout_Click;
 
             cboStatus.SelectedIndexChanged += StatusChanged;
@@ -39,6 +41,7 @@ namespace GROUP_PROJECT
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             // Release the global database context when the form closes.
+            CloseMenuForm();
             db.Dispose();
             base.OnFormClosed(e);
         }
@@ -124,24 +127,72 @@ namespace GROUP_PROJECT
 
         private void Dashboard_Click(object sender, EventArgs e)
         {
-            // Open the inventory screen.
-            using (InventoryForm inventory = new InventoryForm())
-            {
-                inventory.ShowDialog(this);
-            }
-
-            Retrieve();
+            // Show inventory inside the main content panel.
+            OpenMenuForm(new InventoryForm(), "Inventory");
         }
 
         private void NewOrder_Click(object sender, EventArgs e)
         {
-            // Open the administrator sales report.
-            using (SalesForm sales = new SalesForm())
-            {
-                sales.ShowDialog(this);
-            }
+            // Show sales inside the main content panel.
+            OpenMenuForm(new SalesForm(), "Sales Report");
+        }
 
-            Retrieve();
+        private void ProductsMenu_Click(object sender, EventArgs e)
+        {
+            // Return to product management.
+            CloseMenuForm();
+            label1.Text = "Products";
+            SetProductToolsVisible(true);
+            grid.Visible = true;
+            grid.BringToFront();
+            UpdateProductView();
+        }
+
+        private void OpenMenuForm(Form menuForm, string title)
+        {
+            // Place the selected menu form inside the shared content panel.
+            CloseMenuForm();
+            openMenuForm = menuForm;
+            label1.Text = title;
+            SetProductToolsVisible(false);
+            grid.Visible = false;
+
+            openMenuForm.TopLevel = false;
+            openMenuForm.FormBorderStyle = FormBorderStyle.None;
+            openMenuForm.MinimumSize = Size.Empty;
+            openMenuForm.Dock = DockStyle.Fill;
+            panel3.Controls.Add(openMenuForm);
+            openMenuForm.BringToFront();
+            openMenuForm.Show();
+        }
+
+        private void CloseMenuForm()
+        {
+            // Close the current embedded menu before showing another one.
+            if (openMenuForm != null)
+            {
+                openMenuForm.Close();
+                openMenuForm.Dispose();
+                openMenuForm = null;
+            }
+        }
+
+        private void SetProductToolsVisible(bool visible)
+        {
+            // Show product controls only on the Products menu.
+            panel2.Visible = visible;
+            lblSearch.Visible = visible;
+            textBox1.Visible = visible;
+            lblStatus.Visible = visible;
+            cboStatus.Visible = visible;
+            btnEdit.Visible = visible;
+            btnStatus.Visible = visible;
+            btnadd.Visible = visible;
+
+            if (!visible)
+                btnHardDelete.Visible = false;
+            else if (showingDeletedProducts)
+                btnHardDelete.Visible = true;
         }
 
         private void StatusChanged(object sender, EventArgs e)
