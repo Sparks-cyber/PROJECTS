@@ -42,6 +42,7 @@ namespace GROUP_PROJECT
 
                 gridSales.Columns["SaleID"].HeaderText = "SALE #";
                 gridSales.Columns["SaleDate"].HeaderText = "DATE / TIME";
+                gridSales.Columns["PaymentMethod"].HeaderText = "PAYMENT METHOD";
                 gridSales.Columns["ItemCode"].HeaderText = "ITEM CODE";
                 gridSales.Columns["ItemName"].HeaderText = "ITEM NAME";
                 gridSales.Columns["UnitPrice"].HeaderText = "UNIT PRICE";

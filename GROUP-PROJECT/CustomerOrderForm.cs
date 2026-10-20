@@ -303,12 +303,6 @@ namespace GROUP_PROJECT
             UpdateTotals();
         }
 
-        private void CashChanged(object sender, EventArgs e)
-        {
-            // Recalculate the customer's change.
-            UpdateTotals();
-        }
-
         private decimal Total
         {
             get
@@ -326,13 +320,6 @@ namespace GROUP_PROJECT
         private void UpdateTotals()
         {
             lblTotal.Text = "TOTAL: ₱" + Total.ToString("N2");
-            decimal change = numCash.Value - Total;
-            if (change < 0)
-            {
-                change = 0;
-            }
-
-            lblChange.Text = "CHANGE: ₱" + change.ToString("N2");
         }
 
         private void Checkout(object sender, EventArgs e)
@@ -344,26 +331,17 @@ namespace GROUP_PROJECT
                 return;
             }
 
-            if (numCash.Value < Total)
+            decimal paid;
+            string paymentMethod;
+            using (PaymentForm payment = new PaymentForm(Total))
             {
-                Warn("Cash received is not enough.");
-                return;
-            }
+                if (payment.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
 
-            decimal change = numCash.Value - Total;
-            DialogResult confirmation = MessageBox.Show(
-                "TOTAL PAYMENT: ₱" + Total.ToString("N2") +
-                "\nCASH: ₱" + numCash.Value.ToString("N2") +
-                "\nCHANGE: ₱" + change.ToString("N2") +
-                "\n\nConfirm this order?",
-                "Confirm Payment",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question
-            );
-
-            if (confirmation == DialogResult.No)
-            {
-                return;
+                paid = payment.AmountPaid;
+                paymentMethod = payment.PaymentMethod;
             }
 
             try
@@ -372,7 +350,7 @@ namespace GROUP_PROJECT
                 // Save all cart items as one complete transaction.
                 using (TransactionScope transaction = new TransactionScope())
                 {
-                    saleID = db.Adlaw_CreateSaleHeader();
+                    saleID = db.Adlaw_CreateSaleHeader(paymentMethod);
                     foreach (CartItem item in cart)
                     {
                         if (db.Adlaw_AddSaleItem(saleID, item.ProductID, item.Quantity) == 0)
@@ -384,10 +362,8 @@ namespace GROUP_PROJECT
                     transaction.Complete();
                 }
 
-                decimal paid = numCash.Value;
-                string receipt = BuildReceipt(saleID, paid);
+                string receipt = BuildReceipt(saleID, paid, paymentMethod);
                 cart.Clear();
-                numCash.Value = 0;
                 UpdateTotals();
                 LoadMenu();
 
@@ -407,7 +383,7 @@ namespace GROUP_PROJECT
             }
         }
 
-        private string BuildReceipt(int saleID, decimal paid)
+        private string BuildReceipt(int saleID, decimal paid, string paymentMethod)
         {
             StringBuilder text = new StringBuilder();
             text.AppendLine("             ADLAW");
@@ -424,7 +400,8 @@ namespace GROUP_PROJECT
 
             text.AppendLine("--------------------------------");
             text.AppendLine("TOTAL:  ₱" + Total.ToString("N2"));
-            text.AppendLine("CASH:   ₱" + paid.ToString("N2"));
+            text.AppendLine("METHOD: " + paymentMethod);
+            text.AppendLine("PAID:   ₱" + paid.ToString("N2"));
             text.AppendLine("CHANGE: ₱" + (paid - Total).ToString("N2"));
             text.AppendLine("--------------------------------");
             text.AppendLine("       Thank you!");

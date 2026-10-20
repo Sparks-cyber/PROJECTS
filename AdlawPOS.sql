@@ -104,7 +104,8 @@ CREATE TABLE Sales
 (
     SaleID int IDENTITY(1, 1) PRIMARY KEY,
     SaleDate datetime NOT NULL DEFAULT (GETDATE()),
-    TotalAmount decimal(18, 2) NOT NULL
+    TotalAmount decimal(18, 2) NOT NULL,
+    PaymentMethod varchar(20) NOT NULL
 );
 GO
 
@@ -278,11 +279,12 @@ GO
 
 -- Create one sale header for a customer cart
 CREATE PROCEDURE Adlaw_CreateSaleHeader
+    @PaymentMethod varchar(20)
 AS
 BEGIN
     -- Start an empty sale for the customer cart
-    INSERT INTO Sales (TotalAmount)
-    VALUES (0);
+    INSERT INTO Sales (TotalAmount, PaymentMethod)
+    VALUES (0, @PaymentMethod);
 
     RETURN CONVERT(int, SCOPE_IDENTITY());
 END;
@@ -338,7 +340,8 @@ CREATE PROCEDURE Adlaw_RetrieveSales
 AS
 BEGIN
     -- Return every saved sale item
-    SELECT S.SaleID, S.SaleDate, SI.ItemCode, SI.ItemName,
+    SELECT S.SaleID, S.SaleDate, S.PaymentMethod,
+           SI.ItemCode, SI.ItemName,
            SI.Quantity, SI.UnitPrice, SI.Subtotal
     FROM Sales S
     INNER JOIN SaleItems SI ON S.SaleID = SI.SaleID;

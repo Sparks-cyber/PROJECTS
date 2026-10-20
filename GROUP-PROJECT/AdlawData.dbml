@@ -96,6 +96,7 @@
 
   <!-- Create a sale header -->
   <Function Name="Adlaw_CreateSaleHeader" Method="Adlaw_CreateSaleHeader">
+    <Parameter Name="PaymentMethod" Parameter="paymentMethod" Type="System.String" DbType="VarChar(20)" />
     <Return Type="System.Int32" />
   </Function>
 
@@ -111,6 +112,7 @@
     <ElementType Name="RetrieveSalesResult">
       <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="SaleDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="PaymentMethod" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
       <Column Name="ItemCode" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
       <Column Name="ItemName" Type="System.String" DbType="VarChar(150) NOT NULL" CanBeNull="false" />
       <Column Name="Quantity" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />

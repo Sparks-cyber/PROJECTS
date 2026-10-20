@@ -29,6 +29,7 @@ namespace GROUP_PROJECT
     {
         public int SaleID { get; set; }
         public System.DateTime SaleDate { get; set; }
+        public string PaymentMethod { get; set; }
         public string ItemCode { get; set; }
         public string ItemName { get; set; }
         public int Quantity { get; set; }
@@ -173,11 +174,12 @@ namespace GROUP_PROJECT
         }
 
         [Function(Name = "Adlaw_CreateSaleHeader")]
-        public int Adlaw_CreateSaleHeader()
+        public int Adlaw_CreateSaleHeader(string paymentMethod)
         {
             return (int)ExecuteMethodCall(
                 this,
-                (MethodInfo)MethodInfo.GetCurrentMethod()
+                (MethodInfo)MethodInfo.GetCurrentMethod(),
+                paymentMethod
             ).ReturnValue;
         }
 
