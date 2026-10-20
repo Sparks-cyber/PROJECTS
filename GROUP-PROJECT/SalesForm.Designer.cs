@@ -247,7 +247,7 @@ namespace GROUP_PROJECT
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 245);
-            this.ClientSize = new System.Drawing.Size(1004, 656);
+            this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.gridSales);
             this.Controls.Add(this.lblSummary);
             this.Controls.Add(this.lblHistory);
@@ -256,7 +256,7 @@ namespace GROUP_PROJECT
             this.Controls.Add(this.pnlOrders);
             this.Controls.Add(this.pnlHeader);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.MinimumSize = new System.Drawing.Size(900, 600);
+            this.MinimumSize = new System.Drawing.Size(1000, 650);
             this.Name = "SalesForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Adlaw POS - Sales Report";

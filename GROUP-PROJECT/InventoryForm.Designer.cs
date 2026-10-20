@@ -140,7 +140,7 @@ namespace GROUP_PROJECT
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 245);
-            this.ClientSize = new System.Drawing.Size(964, 636);
+            this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.gridInventory);
             this.Controls.Add(this.lblSummary);
             this.lblStockTitle.AutoSize = true;
@@ -152,7 +152,7 @@ namespace GROUP_PROJECT
             this.Controls.Add(this.pnlRestock);
             this.Controls.Add(this.pnlHeader);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.MinimumSize = new System.Drawing.Size(860, 580);
+            this.MinimumSize = new System.Drawing.Size(1000, 650);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Adlaw POS - Inventory";
             this.Load += new System.EventHandler(this.InventoryForm_Load);

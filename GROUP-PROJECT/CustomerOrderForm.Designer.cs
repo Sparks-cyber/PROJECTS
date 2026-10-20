@@ -119,14 +119,14 @@ namespace GROUP_PROJECT
             this.btnCheckout.Click += new System.EventHandler(this.Checkout);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(245, 247, 245);
-            this.ClientSize = new System.Drawing.Size(1194, 656);
+            this.ClientSize = new System.Drawing.Size(1200, 700);
             this.Controls.Add(this.lblTitle); this.Controls.Add(this.lblMenu); this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.gridMenu); this.Controls.Add(this.numQuantity); this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.lblCart); this.Controls.Add(this.gridCart); this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.lblTotal); this.Controls.Add(this.numCash); this.Controls.Add(this.lblChange);
             this.Controls.Add(this.btnCheckout);
             this.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.MinimumSize = new System.Drawing.Size(1100, 650);
+            this.MinimumSize = new System.Drawing.Size(1000, 650);
             this.Name = "CustomerOrderForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Adlaw - Order Now";

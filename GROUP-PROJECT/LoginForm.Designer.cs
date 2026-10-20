@@ -144,7 +144,10 @@
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnHide);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "LoginForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = " ";
             this.ResumeLayout(false);
             this.PerformLayout();
