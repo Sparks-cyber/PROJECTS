@@ -31,7 +31,208 @@ namespace MiniMartPOS
         public Table<InventoryLog> InventoryLogs { get { return GetTable<InventoryLog>(); } }
         public Table<StoreSetting> StoreSettings { get { return GetTable<StoreSetting>(); } }
 
+        [Function(Name = "dbo.LoginUser")]
+        public ISingleResult<LoginUserResult> LoginUser(
+            [Parameter(Name = "Username", DbType = "VarChar(50)")] string username,
+            [Parameter(Name = "Password", DbType = "VarChar(64)")] string password)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                username, password);
+            return (ISingleResult<LoginUserResult>)result.ReturnValue;
+        }
 
+        [Function(Name = "dbo.AdjustStock")]
+        public int AdjustStock(
+            [Parameter(Name = "MenuItemID", DbType = "Int")] int menuItemID,
+            [Parameter(Name = "QuantityChange", DbType = "Int")] int quantityChange,
+            [Parameter(Name = "Reason", DbType = "VarChar(100)")] string reason,
+            [Parameter(Name = "UserID", DbType = "Int")] int? userID)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                menuItemID, quantityChange, reason, userID);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.CreateSale")]
+        public ISingleResult<CreateSaleResult> CreateSale(
+            [Parameter(Name = "TransactionNo", DbType = "VarChar(30)")] string transactionNo,
+            [Parameter(Name = "SaleDate", DbType = "DateTime")] DateTime saleDate,
+            [Parameter(Name = "UserID", DbType = "Int")] int userID,
+            [Parameter(Name = "PaymentMethod", DbType = "VarChar(20)")] string paymentMethod,
+            [Parameter(Name = "Subtotal", DbType = "Decimal(12,2)")] decimal subtotal,
+            [Parameter(Name = "TotalAmount", DbType = "Decimal(12,2)")] decimal totalAmount,
+            [Parameter(Name = "CashReceived", DbType = "Decimal(12,2)")] decimal cashReceived,
+            [Parameter(Name = "ChangeAmount", DbType = "Decimal(12,2)")] decimal changeAmount)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                transactionNo, saleDate, userID, paymentMethod, subtotal,
+                totalAmount, cashReceived, changeAmount);
+            return (ISingleResult<CreateSaleResult>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.AddSaleItem")]
+        public int AddSaleItem(
+            [Parameter(Name = "SaleID", DbType = "Int")] int saleID,
+            [Parameter(Name = "MenuItemID", DbType = "Int")] int menuItemID,
+            [Parameter(Name = "Quantity", DbType = "Int")] int quantity,
+            [Parameter(Name = "UnitPrice", DbType = "Decimal(10,2)")] decimal unitPrice,
+            [Parameter(Name = "Subtotal", DbType = "Decimal(12,2)")] decimal subtotal,
+            [Parameter(Name = "UserID", DbType = "Int")] int userID)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                saleID, menuItemID, quantity, unitPrice, subtotal, userID);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.SaveSettings")]
+        public int SaveSettings(
+            [Parameter(Name = "StoreName", DbType = "VarChar(100)")] string storeName,
+            [Parameter(Name = "ReceiptFooter", DbType = "VarChar(200)")] string receiptFooter,
+            [Parameter(Name = "PrintReceipt", DbType = "Bit")] bool printReceipt,
+            [Parameter(Name = "LowStockAlerts", DbType = "Bit")] bool lowStockAlerts,
+            [Parameter(Name = "SoundEffects", DbType = "Bit")] bool soundEffects)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                storeName, receiptFooter, printReceipt, lowStockAlerts, soundEffects);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.LoadCategories")]
+        public ISingleResult<LookupRow> LoadCategories()
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod());
+            return (ISingleResult<LookupRow>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.LoadSuppliers")]
+        public ISingleResult<LookupRow> LoadSuppliers()
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod());
+            return (ISingleResult<LookupRow>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.GetProduct")]
+        public ISingleResult<ProductEditRow> GetProduct(
+            [Parameter(Name = "MenuItemID", DbType = "Int")] int menuItemID)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(), menuItemID);
+            return (ISingleResult<ProductEditRow>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.AddProduct")]
+        public int AddProduct(
+            [Parameter(Name = "ItemCode", DbType = "VarChar(20)")] string itemCode,
+            [Parameter(Name = "ItemName", DbType = "VarChar(100)")] string itemName,
+            [Parameter(Name = "CategoryID", DbType = "Int")] int categoryID,
+            [Parameter(Name = "SupplierID", DbType = "Int")] int? supplierID,
+            [Parameter(Name = "Price", DbType = "Decimal(10,2)")] decimal price,
+            [Parameter(Name = "Stock", DbType = "Int")] int stock,
+            [Parameter(Name = "ReorderLevel", DbType = "Int")] int reorderLevel,
+            [Parameter(Name = "IsActive", DbType = "Bit")] bool isActive,
+            [Parameter(Name = "ImagePath", DbType = "VarChar(500)")] string imagePath)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                itemCode, itemName, categoryID, supplierID, price, stock,
+                reorderLevel, isActive, imagePath);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.UpdateProduct")]
+        public int UpdateProduct(
+            [Parameter(Name = "MenuItemID", DbType = "Int")] int menuItemID,
+            [Parameter(Name = "ItemCode", DbType = "VarChar(20)")] string itemCode,
+            [Parameter(Name = "ItemName", DbType = "VarChar(100)")] string itemName,
+            [Parameter(Name = "CategoryID", DbType = "Int")] int categoryID,
+            [Parameter(Name = "SupplierID", DbType = "Int")] int? supplierID,
+            [Parameter(Name = "Price", DbType = "Decimal(10,2)")] decimal price,
+            [Parameter(Name = "Stock", DbType = "Int")] int stock,
+            [Parameter(Name = "ReorderLevel", DbType = "Int")] int reorderLevel,
+            [Parameter(Name = "ImagePath", DbType = "VarChar(500)")] string imagePath)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                menuItemID, itemCode, itemName, categoryID, supplierID,
+                price, stock, reorderLevel, imagePath);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.SearchProducts")]
+        public ISingleResult<ProductRow> SearchProducts(
+            [Parameter(Name = "Search", DbType = "VarChar(100)")] string search,
+            [Parameter(Name = "Sort", DbType = "Int")] int sort)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(), search, sort);
+            return (ISingleResult<ProductRow>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.SearchSuppliers")]
+        public ISingleResult<SupplierRow> SearchSuppliers(
+            [Parameter(Name = "Search", DbType = "VarChar(100)")] string search,
+            [Parameter(Name = "Sort", DbType = "Int")] int sort)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(), search, sort);
+            return (ISingleResult<SupplierRow>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.GetSupplier")]
+        public ISingleResult<SupplierRow> GetSupplier(
+            [Parameter(Name = "SupplierID", DbType = "Int")] int supplierID)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(), supplierID);
+            return (ISingleResult<SupplierRow>)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.AddSupplier")]
+        public int AddSupplier(
+            [Parameter(Name = "SupplierCode", DbType = "VarChar(20)")] string supplierCode,
+            [Parameter(Name = "SupplierName", DbType = "VarChar(100)")] string supplierName,
+            [Parameter(Name = "ContactNo", DbType = "VarChar(30)")] string contactNo,
+            [Parameter(Name = "Supplies", DbType = "VarChar(150)")] string supplies,
+            [Parameter(Name = "LastDeliveryDate", DbType = "Date")] DateTime lastDeliveryDate,
+            [Parameter(Name = "IsActive", DbType = "Bit")] bool isActive)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                supplierCode, supplierName, contactNo, supplies, lastDeliveryDate, isActive);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.UpdateSupplier")]
+        public int UpdateSupplier(
+            [Parameter(Name = "SupplierID", DbType = "Int")] int supplierID,
+            [Parameter(Name = "SupplierCode", DbType = "VarChar(20)")] string supplierCode,
+            [Parameter(Name = "SupplierName", DbType = "VarChar(100)")] string supplierName,
+            [Parameter(Name = "ContactNo", DbType = "VarChar(30)")] string contactNo,
+            [Parameter(Name = "Supplies", DbType = "VarChar(150)")] string supplies,
+            [Parameter(Name = "LastDeliveryDate", DbType = "Date")] DateTime lastDeliveryDate,
+            [Parameter(Name = "IsActive", DbType = "Bit")] bool isActive)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(),
+                supplierID, supplierCode, supplierName, contactNo, supplies, lastDeliveryDate, isActive);
+            return (int)result.ReturnValue;
+        }
+
+        [Function(Name = "dbo.DeactivateSupplier")]
+        public int DeactivateSupplier(
+            [Parameter(Name = "SupplierID", DbType = "Int")] int supplierID)
+        {
+            IExecuteResult result = ExecuteMethodCall(this,
+                (System.Reflection.MethodInfo)System.Reflection.MethodInfo.GetCurrentMethod(), supplierID);
+            return (int)result.ReturnValue;
+        }
 
         [Function(Name = "dbo.SetProductStatus")]
         public int SetProductStatus([Parameter(Name = "MenuItemID", DbType = "Int")] int menuItemID, [Parameter(Name = "IsActive", DbType = "Bit")] bool isActive)
@@ -185,6 +386,18 @@ namespace MiniMartPOS
         [Column] public bool PrintReceipt { get; set; }
         [Column] public bool LowStockAlerts { get; set; }
         [Column] public bool SoundEffects { get; set; }
+    }
+
+    public class LoginUserResult
+    {
+        [Column] public int UserID { get; set; }
+        [Column] public string FullName { get; set; }
+        [Column] public string Role { get; set; }
+    }
+
+    public class CreateSaleResult
+    {
+        [Column] public int SaleID { get; set; }
     }
 
 

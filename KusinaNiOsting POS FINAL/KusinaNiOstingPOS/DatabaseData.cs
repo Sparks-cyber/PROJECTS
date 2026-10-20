@@ -35,28 +35,6 @@ namespace MiniMartPOS
             }
         }
 
-        internal static void SaveMenuItem(MenuItem item, string imagePath)
-        {
-            using (KusinaDataClassesDataContext db = new KusinaDataClassesDataContext())
-            {
-                MenuItem row = item.MenuItemID == 0 ? null : db.MenuItems.FirstOrDefault(x => x.MenuItemID == item.MenuItemID);
-                if (row == null) { row = new MenuItem(); db.MenuItems.InsertOnSubmit(row); }
-                row.ItemCode = item.ItemCode; row.ItemName = item.ItemName; row.CategoryID = item.CategoryID;
-                row.SupplierID = item.SupplierID; row.Price = item.Price; row.Stock = item.Stock;
-                row.ReorderLevel = item.ReorderLevel; row.IsActive = item.IsActive;
-                db.SubmitChanges();
-
-                if (!string.IsNullOrWhiteSpace(imagePath))
-                {
-                    ProductImage image = db.ProductImages.FirstOrDefault(x => x.MenuItemID == row.MenuItemID && x.IsPrimary);
-                    if (image == null) { image = new ProductImage { MenuItemID = row.MenuItemID, IsPrimary = true }; db.ProductImages.InsertOnSubmit(image); }
-                    image.ImagePath = imagePath;
-                    db.SubmitChanges();
-                }
-            }
-            Reload();
-        }
-
         internal static void SoftDeleteMenuItem(int id)
         {
             using (KusinaDataClassesDataContext db = new KusinaDataClassesDataContext())
@@ -78,31 +56,11 @@ namespace MiniMartPOS
             Reload();
         }
 
-        internal static void SaveSupplier(Supplier supplier)
-        {
-            using (KusinaDataClassesDataContext db = new KusinaDataClassesDataContext())
-            {
-                Supplier row = supplier.SupplierID == 0 ? null : db.Suppliers.FirstOrDefault(x => x.SupplierID == supplier.SupplierID);
-                if (row == null) { row = new Supplier(); db.Suppliers.InsertOnSubmit(row); }
-                row.SupplierCode = supplier.SupplierCode; row.SupplierName = supplier.SupplierName;
-                row.ContactNo = supplier.ContactNo; row.Supplies = supplier.Supplies;
-                row.LastDeliveryDate = supplier.LastDeliveryDate; row.IsActive = supplier.IsActive;
-                db.SubmitChanges();
-            }
-            Reload();
-        }
-
         internal static void AdjustStock(int itemId, int change, string reason, int? userId)
         {
             using (KusinaDataClassesDataContext db = new KusinaDataClassesDataContext())
-            {
-                MenuItem item = db.MenuItems.First(x => x.MenuItemID == itemId);
-                int oldStock = item.Stock;
-                item.Stock += change;
-                db.InventoryLogs.InsertOnSubmit(new InventoryLog { MenuItemID = itemId, QuantityChange = change,
-                    PreviousStock = oldStock, NewStock = item.Stock, Reason = reason, LogDate = DateTime.Now, UserID = userId });
-                db.SubmitChanges();
-            }
+                db.AdjustStock(itemId, change, reason, userId);
+
             Reload();
         }
 
@@ -110,24 +68,28 @@ namespace MiniMartPOS
         {
             using (KusinaDataClassesDataContext db = new KusinaDataClassesDataContext())
             {
-                Sale row = new Sale { TransactionNo = sale.TransactionNo, SaleDate = sale.SaleDate, UserID = sale.UserID,
-                    PaymentMethod = sale.PaymentMethod, Subtotal = sale.Subtotal, TotalAmount = sale.TotalAmount,
-                    CashReceived = sale.CashReceived, ChangeAmount = sale.ChangeAmount };
-                db.Sales.InsertOnSubmit(row);
-                db.SubmitChanges();
+                CreateSaleResult savedSale = db.CreateSale(
+                    sale.TransactionNo,
+                    sale.SaleDate,
+                    sale.UserID,
+                    sale.PaymentMethod,
+                    sale.Subtotal,
+                    sale.TotalAmount,
+                    sale.CashReceived,
+                    sale.ChangeAmount).First();
+
+                sale.SaleID = savedSale.SaleID;
+
                 foreach (SaleItem line in lines)
                 {
-                    MenuItem item = db.MenuItems.First(x => x.MenuItemID == line.MenuItemID);
-                    int oldStock = item.Stock;
-                    item.Stock -= line.Quantity;
-                    db.SaleItems.InsertOnSubmit(new SaleItem { SaleID = row.SaleID, MenuItemID = line.MenuItemID,
-                        Quantity = line.Quantity, UnitPrice = line.UnitPrice, Subtotal = line.Subtotal });
-                    db.InventoryLogs.InsertOnSubmit(new InventoryLog { MenuItemID = line.MenuItemID,
-                        QuantityChange = -line.Quantity, PreviousStock = oldStock, NewStock = item.Stock,
-                        Reason = "Sale " + row.TransactionNo, LogDate = DateTime.Now, UserID = row.UserID });
+                    db.AddSaleItem(
+                        sale.SaleID,
+                        line.MenuItemID,
+                        line.Quantity,
+                        line.UnitPrice,
+                        line.Subtotal,
+                        sale.UserID);
                 }
-                db.SubmitChanges();
-                sale.SaleID = row.SaleID;
             }
             Reload();
             return sale;
@@ -136,14 +98,9 @@ namespace MiniMartPOS
         internal static void SaveSettings(StoreSetting settings)
         {
             using (KusinaDataClassesDataContext db = new KusinaDataClassesDataContext())
-            {
-                StoreSetting row = db.StoreSettings.FirstOrDefault();
-                if (row == null) { row = new StoreSetting(); db.StoreSettings.InsertOnSubmit(row); }
-                row.StoreName = settings.StoreName; row.ReceiptFooter = settings.ReceiptFooter;
-                row.PrintReceipt = settings.PrintReceipt; row.LowStockAlerts = settings.LowStockAlerts;
-                row.SoundEffects = settings.SoundEffects;
-                db.SubmitChanges();
-            }
+                db.SaveSettings(settings.StoreName, settings.ReceiptFooter,
+                    settings.PrintReceipt, settings.LowStockAlerts, settings.SoundEffects);
+
             Reload();
         }
 

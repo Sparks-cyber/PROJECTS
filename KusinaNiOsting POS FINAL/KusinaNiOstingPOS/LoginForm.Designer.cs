@@ -1,6 +1,6 @@
 ﻿namespace MiniMartPOS
 {
-    partial class Form1
+    partial class LoginForm
     {
         private System.ComponentModel.IContainer components = null;
 
@@ -132,7 +132,7 @@
             this.btnLogin.TabIndex = 4;
             this.btnLogin.Text = "LOGIN AS ADMIN";
             this.btnLogin.UseVisualStyleBackColor = false;
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click_1);
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
             // chkShowPassword
             // 
@@ -258,7 +258,7 @@
             this.lblWelcome.TabIndex = 0;
             this.lblWelcome.Text = "Welcome";
             // 
-            // Form1
+            // LoginForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -270,10 +270,10 @@
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(1296, 799);
             this.MinimumSize = new System.Drawing.Size(1296, 799);
-            this.Name = "Form1";
+            this.Name = "LoginForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Kusina ni Osting POS - Login";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.LoginForm_Load);
             this.panelBrand.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picLoginLogo)).EndInit();
             this.panelLoginCard.ResumeLayout(false);

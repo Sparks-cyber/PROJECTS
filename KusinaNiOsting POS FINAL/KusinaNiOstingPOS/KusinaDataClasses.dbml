@@ -87,6 +87,49 @@
       <Column Name="ReorderLevel" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
     </ElementType>
   </Function>
+  <Function Name="dbo.LoginUser" Method="LoginUser">
+    <Parameter Name="Username" Parameter="username" Type="System.String" DbType="VarChar(50)" />
+    <Parameter Name="Password" Parameter="password" Type="System.String" DbType="VarChar(64)" />
+    <ElementType Name="LoginUserResult">
+      <Column Name="UserID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FullName" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Role" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.AdjustStock" Method="AdjustStock">
+    <Parameter Name="MenuItemID" Parameter="menuItemID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="QuantityChange" Parameter="quantityChange" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Reason" Parameter="reason" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+  </Function>
+  <Function Name="dbo.CreateSale" Method="CreateSale">
+    <Parameter Name="TransactionNo" Parameter="transactionNo" Type="System.String" DbType="VarChar(30)" />
+    <Parameter Name="SaleDate" Parameter="saleDate" Type="System.DateTime" DbType="DateTime" />
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="PaymentMethod" Parameter="paymentMethod" Type="System.String" DbType="VarChar(20)" />
+    <Parameter Name="Subtotal" Parameter="subtotal" Type="System.Decimal" DbType="Decimal(12,2)" />
+    <Parameter Name="TotalAmount" Parameter="totalAmount" Type="System.Decimal" DbType="Decimal(12,2)" />
+    <Parameter Name="CashReceived" Parameter="cashReceived" Type="System.Decimal" DbType="Decimal(12,2)" />
+    <Parameter Name="ChangeAmount" Parameter="changeAmount" Type="System.Decimal" DbType="Decimal(12,2)" />
+    <ElementType Name="CreateSaleResult">
+      <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.AddSaleItem" Method="AddSaleItem">
+    <Parameter Name="SaleID" Parameter="saleID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="MenuItemID" Parameter="menuItemID" Type="System.Int32" DbType="Int" />
+    <Parameter Name="Quantity" Parameter="quantity" Type="System.Int32" DbType="Int" />
+    <Parameter Name="UnitPrice" Parameter="unitPrice" Type="System.Decimal" DbType="Decimal(10,2)" />
+    <Parameter Name="Subtotal" Parameter="subtotal" Type="System.Decimal" DbType="Decimal(12,2)" />
+    <Parameter Name="UserID" Parameter="userID" Type="System.Int32" DbType="Int" />
+  </Function>
+  <Function Name="dbo.SaveSettings" Method="SaveSettings">
+    <Parameter Name="StoreName" Parameter="storeName" Type="System.String" DbType="VarChar(100)" />
+    <Parameter Name="ReceiptFooter" Parameter="receiptFooter" Type="System.String" DbType="VarChar(200)" />
+    <Parameter Name="PrintReceipt" Parameter="printReceipt" Type="System.Boolean" DbType="Bit" />
+    <Parameter Name="LowStockAlerts" Parameter="lowStockAlerts" Type="System.Boolean" DbType="Bit" />
+    <Parameter Name="SoundEffects" Parameter="soundEffects" Type="System.Boolean" DbType="Bit" />
+  </Function>
   <Function Name="dbo.GetRecentTransactions" Method="GetRecentTransactions">
     <ElementType Name="GetRecentTransactionsResult">
       <Column Name="SaleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />

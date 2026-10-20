@@ -58,7 +58,8 @@ namespace MiniMartPOS
         private void btnAdmin_Click(object sender, EventArgs e)
         {
             ShowLoading("Opening secure admin login…"); Hide();
-            using (Form1 login = new Form1()) login.ShowDialog();
+            using (LoginForm login = new LoginForm())
+                login.ShowDialog();
             Show(); loading.Visible = false;
         }
 

@@ -539,3 +539,85 @@ WHERE @Search = '' OR S.TransactionNo LIKE '%' + @Search + '%'
    OR S.PaymentMethod LIKE '%' + @Search + '%'
 ORDER BY S.SaleDate DESC;
 GO
+
+-- ADJUST PRODUCT STOCK
+CREATE PROCEDURE AdjustStock
+    @MenuItemID INT,
+    @QuantityChange INT,
+    @Reason VARCHAR(100),
+    @UserID INT
+AS
+INSERT INTO InventoryLogs
+    (MenuItemID, QuantityChange, PreviousStock, NewStock, Reason, LogDate, UserID)
+SELECT MenuItemID, @QuantityChange, Stock, Stock + @QuantityChange,
+       @Reason, GETDATE(), @UserID
+FROM MenuItems
+WHERE MenuItemID = @MenuItemID;
+
+UPDATE MenuItems
+SET Stock = Stock + @QuantityChange
+WHERE MenuItemID = @MenuItemID;
+GO
+
+-- CREATE SALE HEADER
+CREATE PROCEDURE CreateSale
+    @TransactionNo VARCHAR(30),
+    @SaleDate DATETIME,
+    @UserID INT,
+    @PaymentMethod VARCHAR(20),
+    @Subtotal DECIMAL(12, 2),
+    @TotalAmount DECIMAL(12, 2),
+    @CashReceived DECIMAL(12, 2),
+    @ChangeAmount DECIMAL(12, 2)
+AS
+INSERT INTO Sales
+    (TransactionNo, SaleDate, UserID, PaymentMethod, Subtotal,
+     TotalAmount, CashReceived, ChangeAmount)
+VALUES
+    (@TransactionNo, @SaleDate, @UserID, @PaymentMethod, @Subtotal,
+     @TotalAmount, @CashReceived, @ChangeAmount);
+
+SELECT CONVERT(INT, SCOPE_IDENTITY()) AS SaleID;
+GO
+
+-- ADD SALE ITEM AND DEDUCT STOCK
+CREATE PROCEDURE AddSaleItem
+    @SaleID INT,
+    @MenuItemID INT,
+    @Quantity INT,
+    @UnitPrice DECIMAL(10, 2),
+    @Subtotal DECIMAL(12, 2),
+    @UserID INT
+AS
+INSERT INTO SaleItems
+    (SaleID, MenuItemID, Quantity, UnitPrice, Subtotal)
+VALUES
+    (@SaleID, @MenuItemID, @Quantity, @UnitPrice, @Subtotal);
+
+INSERT INTO InventoryLogs
+    (MenuItemID, QuantityChange, PreviousStock, NewStock, Reason, LogDate, UserID)
+SELECT MenuItemID, -@Quantity, Stock, Stock - @Quantity,
+       'Sale', GETDATE(), @UserID
+FROM MenuItems
+WHERE MenuItemID = @MenuItemID;
+
+UPDATE MenuItems
+SET Stock = Stock - @Quantity
+WHERE MenuItemID = @MenuItemID;
+GO
+
+-- SAVE STORE SETTINGS
+CREATE PROCEDURE SaveSettings
+    @StoreName VARCHAR(100),
+    @ReceiptFooter VARCHAR(200),
+    @PrintReceipt BIT,
+    @LowStockAlerts BIT,
+    @SoundEffects BIT
+AS
+UPDATE StoreSettings
+SET StoreName = @StoreName,
+    ReceiptFooter = @ReceiptFooter,
+    PrintReceipt = @PrintReceipt,
+    LowStockAlerts = @LowStockAlerts,
+    SoundEffects = @SoundEffects;
+GO

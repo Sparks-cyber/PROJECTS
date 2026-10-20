@@ -48,39 +48,22 @@ namespace MiniMartPOS
         public bool IsActive { get; set; }
     }
 
-    public class LoginRow
-    {
-        public int UserID { get; set; }
-        public string FullName { get; set; }
-        public string Role { get; set; }
-    }
-
     public partial class KusinaDataClassesDataContext
     {
         public System.Collections.Generic.List<LookupRow> LoadCategoriesList()
         {
-            return ExecuteQuery<LookupRow>("EXEC LoadCategories").ToList();
+            return LoadCategories().ToList();
         }
 
         public System.Collections.Generic.List<LookupRow> LoadSuppliersList()
         {
-            return ExecuteQuery<LookupRow>("EXEC LoadSuppliers").ToList();
-        }
-
-        public int AddProduct(string code, string name, int categoryID, int? supplierID, decimal price, int stock, int reorder, bool active, string imagePath)
-        {
-            return ExecuteCommand("EXEC AddProduct {0},{1},{2},{3},{4},{5},{6},{7},{8}", code, name, categoryID, supplierID, price, stock, reorder, active, imagePath);
-        }
-
-        public int UpdateProduct(int id, string code, string name, int categoryID, int? supplierID, decimal price, int stock, int reorder, string imagePath)
-        {
-            return ExecuteCommand("EXEC UpdateProduct {0},{1},{2},{3},{4},{5},{6},{7},{8}", id, code, name, categoryID, supplierID, price, stock, reorder, imagePath);
+            return LoadSuppliers().ToList();
         }
 
         public System.Collections.Generic.List<ProductRow> SearchProductsList(string search, int sort)
         {
             System.Collections.Generic.List<ProductRow> products =
-                ExecuteQuery<ProductRow>("EXEC SearchProducts {0},{1}", search, sort).ToList();
+                SearchProducts(search, sort).ToList();
 
             // Sort the products using simple C# conditions.
             if (sort == 1)
@@ -104,7 +87,7 @@ namespace MiniMartPOS
         public System.Collections.Generic.List<SupplierRow> SearchSuppliersList(string search, int sort)
         {
             System.Collections.Generic.List<SupplierRow> suppliers =
-                ExecuteQuery<SupplierRow>("EXEC SearchSuppliers {0},{1}", search, sort).ToList();
+                SearchSuppliers(search, sort).ToList();
 
             // Sort the suppliers using simple C# conditions.
             if (sort == 1)
@@ -119,27 +102,28 @@ namespace MiniMartPOS
 
         public SupplierRow GetSupplierSimple(int id)
         {
-            return ExecuteQuery<SupplierRow>("EXEC GetSupplier {0}", id).FirstOrDefault();
+            return GetSupplier(id).FirstOrDefault();
+        }
+
+        public ProductEditRow GetProductSimple(int id)
+        {
+            return GetProduct(id).FirstOrDefault();
         }
 
         public int AddSupplierSimple(string code, string name, string contact, string supplies, DateTime date, bool active)
         {
-            return ExecuteCommand("EXEC AddSupplier {0},{1},{2},{3},{4},{5}", code, name, contact, supplies, date, active);
+            return AddSupplier(code, name, contact, supplies, date, active);
         }
 
         public int UpdateSupplierSimple(int id, string code, string name, string contact, string supplies, DateTime date, bool active)
         {
-            return ExecuteCommand("EXEC UpdateSupplier {0},{1},{2},{3},{4},{5},{6}", id, code, name, contact, supplies, date, active);
+            return UpdateSupplier(id, code, name, contact, supplies, date, active);
         }
 
         public int DeactivateSupplierSimple(int id)
         {
-            return ExecuteCommand("EXEC DeactivateSupplier {0}", id);
+            return DeactivateSupplier(id);
         }
 
-        public LoginRow LoginUserSimple(string username, string passwordHash)
-        {
-            return ExecuteQuery<LoginRow>("EXEC LoginUser {0},{1}", username, passwordHash).FirstOrDefault();
-        }
     }
 }

@@ -8,7 +8,6 @@ namespace MiniMartPOS
 {
     public partial class MenuItemEditForm : Form
     {
-        // ONE DATABASE CONTEXT FOR THIS FORM.
         private readonly KusinaDataClassesDataContext db = new KusinaDataClassesDataContext();
 
         private int itemID;
@@ -37,61 +36,48 @@ namespace MiniMartPOS
                 LoadItem();
         }
 
-        // LOAD CATEGORIES
         private void LoadCategories()
         {
-            { // Shared form DataContext
-
-                cmbCategory.DataSource = db.LoadCategoriesList();
-                cmbCategory.DisplayMember = "Name";
-                cmbCategory.ValueMember = "ID";
-            }
+            cmbCategory.DataSource = db.LoadCategoriesList();
+            cmbCategory.DisplayMember = "Name";
+            cmbCategory.ValueMember = "ID";
         }
 
-        // LOAD SUPPLIERS
         private void LoadSuppliers()
         {
-            { // Shared form DataContext
-
-                cmbSupplier.DataSource = db.LoadSuppliersList();
-                cmbSupplier.DisplayMember = "Name";
-                cmbSupplier.ValueMember = "ID";
-            }
+            cmbSupplier.DataSource = db.LoadSuppliersList();
+            cmbSupplier.DisplayMember = "Name";
+            cmbSupplier.ValueMember = "ID";
         }
 
-        // LOAD PRODUCT
         private void LoadItem()
         {
-            { // Shared form DataContext
+            ProductEditRow item = db.GetProductSimple(itemID);
 
-                ProductEditRow item = db.ExecuteQuery<ProductEditRow>("EXEC GetProduct {0}", itemID).FirstOrDefault();
+            if (item == null)
+                return;
 
-                if (item == null)
-                    return;
+            txtCode.Text = item.ItemCode;
+            txtName.Text = item.ItemName;
+            numPrice.Value = item.Price;
+            numStock.Value = item.Stock;
+            numReorder.Value = item.ReorderLevel;
+            chkActive.Checked = item.IsActive;
 
-                txtCode.Text = item.ItemCode;
-                txtName.Text = item.ItemName;
-                numPrice.Value = item.Price;
-                numStock.Value = item.Stock;
-                numReorder.Value = item.ReorderLevel;
-                chkActive.Checked = item.IsActive;
+            cmbCategory.SelectedValue = item.CategoryID;
 
-                cmbCategory.SelectedValue = item.CategoryID;
+            if (item.SupplierID.HasValue)
+                cmbSupplier.SelectedValue = item.SupplierID.Value;
 
-                if (item.SupplierID.HasValue)
-                    cmbSupplier.SelectedValue = item.SupplierID.Value;
+            currentImage = item.ImagePath;
 
-                currentImage = item.ImagePath;
-
-                if (currentImage != null)
-                    SetPreview(UiStyle.LoadProductImage(currentImage, 190, 190));
-            }
+            if (currentImage != null)
+                SetPreview(UiStyle.LoadProductImage(currentImage, 190, 190));
         }
 
-        // BROWSE IMAGE
-        // EVENT: btnBrowseImage_Click - runs when the user interacts with this control.
         private void btnBrowseImage_Click(object sender, EventArgs e)
         {
+            // Select a product image.
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp";
 
@@ -115,7 +101,6 @@ namespace MiniMartPOS
                 oldImage.Dispose();
         }
 
-        // SAVE IMAGE
         private string SaveImage(string code)
         {
             if (string.IsNullOrWhiteSpace(selectedImage))
@@ -133,10 +118,9 @@ namespace MiniMartPOS
             return "Images/Products/" + fileName;
         }
 
-        // SAVE PRODUCT
-        // EVENT: btnSave_Click - runs when the user interacts with this control.
         private void btnSave_Click(object sender, EventArgs e)
         {
+            // Save the product through its stored procedure.
             if (txtCode.Text.Trim() == "" || txtName.Text.Trim() == "")
             {
                 UiDialogs.Warning(this, "Menu Item", "Code and name are required.");
@@ -159,47 +143,27 @@ namespace MiniMartPOS
 
             string imagePath = SaveImage(code);
 
-            { // Shared form DataContext
+            if (itemID == 0)
+            {
+                db.AddProduct(code, name, categoryID, supplierID,
+                    numPrice.Value, Convert.ToInt32(numStock.Value),
+                    Convert.ToInt32(numReorder.Value), chkActive.Checked, imagePath);
+            }
+            else
+            {
+                db.UpdateProduct(itemID, code, name, categoryID, supplierID,
+                    numPrice.Value, Convert.ToInt32(numStock.Value),
+                    Convert.ToInt32(numReorder.Value), imagePath);
 
-                if (itemID == 0)
-                {
-                    db.AddProduct(
-                        code,
-                        name,
-                        categoryID,
-                        supplierID,
-                        numPrice.Value,
-                        Convert.ToInt32(numStock.Value),
-                        Convert.ToInt32(numReorder.Value),
-                        chkActive.Checked,
-                        imagePath
-                    );
-                }
-                else
-                {
-                    db.UpdateProduct(
-                        itemID,
-                        code,
-                        name,
-                        categoryID,
-                        supplierID,
-                        numPrice.Value,
-                        Convert.ToInt32(numStock.Value),
-                        Convert.ToInt32(numReorder.Value),
-                        imagePath
-                    );
-
-                    // SOFT DELETE OR RESTORE: STATUS IS CHANGED BY ITS OWN PROCEDURE.
-                    db.SetProductStatus(itemID, chkActive.Checked);
-                }
+                db.SetProductStatus(itemID, chkActive.Checked);
             }
 
             DialogResult = DialogResult.OK;
             Close();
         }
-        // RELEASE THE DATABASE CONTEXT WHEN THE FORM CLOSES.
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
+            // Release the database connection when the form closes.
             db.Dispose();
             base.OnFormClosed(e);
         }
