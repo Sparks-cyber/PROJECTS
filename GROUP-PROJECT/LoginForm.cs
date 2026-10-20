@@ -5,11 +5,11 @@ using System.Windows.Forms;
 
 namespace GROUP_PROJECT
 {
-    public partial class Form1 : Form
+    public partial class LoginForm : Form
     {
         public AuthenticationResult LoggedInUser { get; private set; }
 
-        public Form1()
+        public LoginForm()
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;

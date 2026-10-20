@@ -17,7 +17,7 @@ namespace GROUP_PROJECT
         private void AdminLogin(object sender, EventArgs e)
         {
             // Open the administrator login screen.
-            Form1 login = new Form1();
+            LoginForm login = new LoginForm();
             login.FormClosed += delegate { this.Show(); };
             login.Show();
             this.Hide();

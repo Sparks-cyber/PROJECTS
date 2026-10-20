@@ -93,7 +93,7 @@
             this.btnneworder.Name = "btnneworder";
             this.btnneworder.Size = new System.Drawing.Size(180, 52);
             this.btnneworder.TabIndex = 1;
-            this.btnneworder.Text = "SALES / POS";
+            this.btnneworder.Text = "SALES REPORT";
             this.btnneworder.UseVisualStyleBackColor = false;
 
             // 

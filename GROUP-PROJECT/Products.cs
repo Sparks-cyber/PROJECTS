@@ -121,7 +121,7 @@ namespace GROUP_PROJECT
 
         private void NewOrder_Click(object sender, EventArgs e)
         {
-            // Open the administrator sales screen.
+            // Open the administrator sales report.
             using (SalesForm sales = new SalesForm())
             {
                 sales.ShowDialog(this);
