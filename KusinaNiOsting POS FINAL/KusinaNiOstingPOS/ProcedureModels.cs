@@ -62,42 +62,12 @@ namespace MiniMartPOS
 
         public System.Collections.Generic.List<ProductRow> SearchProductsList(string search, int sort)
         {
-            System.Collections.Generic.List<ProductRow> products =
-                SearchProducts(search, sort).ToList();
-
-            // Sort the products using simple C# conditions.
-            if (sort == 1)
-                products = products.OrderByDescending(item => item.ItemName).ToList();
-            else if (sort == 2)
-                products = products.OrderBy(item => item.Price).ToList();
-            else if (sort == 3)
-                products = products.OrderByDescending(item => item.Price).ToList();
-            else if (sort == 4)
-                products = products.OrderBy(item => item.Stock).ToList();
-            else if (sort == 5)
-                products = products.OrderByDescending(item => item.Stock).ToList();
-            else if (sort == 6)
-                products = products.OrderByDescending(item => item.IsActive).ToList();
-            else if (sort == 7)
-                products = products.OrderBy(item => item.IsActive).ToList();
-
-            return products;
+            return SearchProducts(search, sort).ToList();
         }
 
         public System.Collections.Generic.List<SupplierRow> SearchSuppliersList(string search, int sort)
         {
-            System.Collections.Generic.List<SupplierRow> suppliers =
-                SearchSuppliers(search, sort).ToList();
-
-            // Sort the suppliers using simple C# conditions.
-            if (sort == 1)
-                suppliers = suppliers.OrderByDescending(item => item.SupplierName).ToList();
-            else if (sort == 2)
-                suppliers = suppliers.OrderByDescending(item => item.LastDeliveryDate).ToList();
-            else if (sort == 3)
-                suppliers = suppliers.OrderBy(item => item.LastDeliveryDate).ToList();
-
-            return suppliers;
+            return SearchSuppliers(search, sort).ToList();
         }
 
         public SupplierRow GetSupplierSimple(int id)

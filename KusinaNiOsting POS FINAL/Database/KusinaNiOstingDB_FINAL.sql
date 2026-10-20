@@ -324,7 +324,14 @@ WHERE M.ItemCode LIKE '%' + @Search + '%'
    OR M.ItemName LIKE '%' + @Search + '%'
    OR C.CategoryName LIKE '%' + @Search + '%'
 ORDER BY
-    M.ItemName ASC;
+    CASE WHEN @Sort = 0 THEN M.ItemName END ASC,
+    CASE WHEN @Sort = 1 THEN M.ItemName END DESC,
+    CASE WHEN @Sort = 2 THEN M.Price END ASC,
+    CASE WHEN @Sort = 3 THEN M.Price END DESC,
+    CASE WHEN @Sort = 4 THEN M.Stock END ASC,
+    CASE WHEN @Sort = 5 THEN M.Stock END DESC,
+    CASE WHEN @Sort = 6 THEN M.IsActive END DESC,
+    CASE WHEN @Sort = 7 THEN M.IsActive END ASC;
 
 GO
 
@@ -454,7 +461,11 @@ FROM Suppliers
 WHERE SupplierCode LIKE '%' + @Search + '%'
    OR SupplierName LIKE '%' + @Search + '%'
    OR Supplies LIKE '%' + @Search + '%'
-ORDER BY SupplierName;
+ORDER BY
+    CASE WHEN @Sort = 0 THEN SupplierName END ASC,
+    CASE WHEN @Sort = 1 THEN SupplierName END DESC,
+    CASE WHEN @Sort = 2 THEN LastDeliveryDate END DESC,
+    CASE WHEN @Sort = 3 THEN LastDeliveryDate END ASC;
 GO
 
 -- GET ONE SUPPLIER
@@ -523,7 +534,12 @@ LEFT JOIN Suppliers S ON M.SupplierID = S.SupplierID
 WHERE M.IsActive = 1
   AND (@Search = '' OR M.ItemName LIKE '%' + @Search + '%'
        OR S.SupplierName LIKE '%' + @Search + '%')
-ORDER BY M.Stock;
+ORDER BY
+    CASE WHEN @Sort = 0 THEN M.Stock END ASC,
+    CASE WHEN @Sort = 1 THEN M.Stock END DESC,
+    CASE WHEN @Sort = 2 THEN M.ItemName END ASC,
+    CASE WHEN @Sort = 3 THEN M.ItemName END DESC,
+    CASE WHEN @Sort = 4 THEN S.SupplierName END ASC;
 GO
 
 -- LOAD SALES
@@ -532,12 +548,17 @@ CREATE PROCEDURE SP_LoadSales
 AS
 SELECT TOP 100 S.SaleID, S.TransactionNo, S.SaleDate, S.TotalAmount,
        S.PaymentMethod, U.FullName AS Cashier,
-       0 AS ItemCount
+       (SELECT ISNULL(SUM(SI.Quantity), 0) FROM SaleItems SI
+        WHERE SI.SaleID = S.SaleID) AS ItemCount
 FROM Sales S
 INNER JOIN Users U ON S.UserID = U.UserID
 WHERE @Search = '' OR S.TransactionNo LIKE '%' + @Search + '%'
    OR S.PaymentMethod LIKE '%' + @Search + '%'
-ORDER BY S.SaleDate DESC;
+ORDER BY
+    CASE WHEN @Sort = 0 THEN S.SaleDate END DESC,
+    CASE WHEN @Sort = 1 THEN S.SaleDate END ASC,
+    CASE WHEN @Sort = 2 THEN S.TotalAmount END DESC,
+    CASE WHEN @Sort = 3 THEN S.TotalAmount END ASC;
 GO
 
 -- ADJUST PRODUCT STOCK

@@ -30,16 +30,6 @@ namespace MiniMartPOS
             List<SP_LoadInventoryResult> items =
                 db.SP_LoadInventory(key, cmbSort.SelectedIndex).ToList();
 
-            // Sort inventory using simple C# conditions.
-            if (cmbSort.SelectedIndex == 1)
-                items = items.OrderByDescending(item => item.Stock).ToList();
-            else if (cmbSort.SelectedIndex == 2)
-                items = items.OrderBy(item => item.ItemName).ToList();
-            else if (cmbSort.SelectedIndex == 3)
-                items = items.OrderByDescending(item => item.ItemName).ToList();
-            else if (cmbSort.SelectedIndex == 4)
-                items = items.OrderBy(item => item.SupplierName).ToList();
-
             dgvData.Rows.Clear();
             foreach (SP_LoadInventoryResult item in items)
             {

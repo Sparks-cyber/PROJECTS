@@ -30,27 +30,9 @@ namespace MiniMartPOS
             string key = txtSearch.Text.Trim();
             List<SP_LoadSalesResult> sales =
                 db.SP_LoadSales(key, cmbSort.SelectedIndex).ToList();
-
-            // Sort sales using simple C# conditions.
-            if (cmbSort.SelectedIndex == 1)
-                sales = sales.OrderBy(item => item.SaleDate).ToList();
-            else if (cmbSort.SelectedIndex == 2)
-                sales = sales.OrderByDescending(item => item.TotalAmount).ToList();
-            else if (cmbSort.SelectedIndex == 3)
-                sales = sales.OrderBy(item => item.TotalAmount).ToList();
-
-            List<SaleItem> saleItems = db.SaleItems.ToList();
             dgvData.Rows.Clear();
             foreach (SP_LoadSalesResult sale in sales)
             {
-                // Count all quantities included in this sale.
-                sale.ItemCount = 0;
-                foreach (SaleItem item in saleItems)
-                {
-                    if (item.SaleID == sale.SaleID)
-                        sale.ItemCount += item.Quantity;
-                }
-
                 int row = dgvData.Rows.Add(sale.TransactionNo,
                     sale.SaleDate.ToString("MMM d, yyyy h:mm tt"), sale.ItemCount,
                     sale.PaymentMethod, "₱" + sale.TotalAmount.ToString("N2"), sale.Cashier);
