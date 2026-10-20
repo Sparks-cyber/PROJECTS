@@ -14,11 +14,6 @@ namespace MiniMartPOS
         {
             InitializeComponent();
             db.CommandTimeout = 10;
-
-            if (System.ComponentModel.LicenseManager.UsageMode ==
-                System.ComponentModel.LicenseUsageMode.Designtime)
-                return;
-
             AcceptButton = btnLogin;
             DesignLoginForm();
         }
@@ -71,24 +66,19 @@ namespace MiniMartPOS
                 string passwordHash = PasswordHelper.Hash(password);
                 LoginUserResult user = db.LoginUser(username, passwordHash).FirstOrDefault();
 
-                if (user == null)
+                if (user != null && user.Role == AppConstants.AdminRole)
+                {
+                    Session.CurrentUserID = user.UserID;
+                    Session.CurrentUserName = user.FullName;
+                    Session.CurrentRole = user.Role;
+                    OpenDashboard(user.FullName);
+                }
+                else
                 {
                     UiDialogs.Error(this, "Login Failed", "Incorrect username or password.");
                     txtPassword.Clear();
                     txtPassword.Focus();
-                    return;
                 }
-
-                if (user.Role != AppConstants.AdminRole)
-                {
-                    UiDialogs.Error(this, "Access Denied", "This account is not an administrator.");
-                    return;
-                }
-
-                Session.CurrentUserID = user.UserID;
-                Session.CurrentUserName = user.FullName;
-                Session.CurrentRole = user.Role;
-                OpenDashboard(user.FullName);
             }
             catch (Exception ex)
             {
@@ -96,8 +86,7 @@ namespace MiniMartPOS
             }
             finally
             {
-                if (!IsDisposed)
-                    btnLogin.Enabled = true;
+                btnLogin.Enabled = true;
             }
         }
 
