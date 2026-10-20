@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GROUP_PROJECT
@@ -45,7 +44,7 @@ namespace GROUP_PROJECT
             }
         }
 
-        private async void btnlogin_Click(object sender, EventArgs e)
+        private void btnlogin_Click(object sender, EventArgs e)
         {
             // Validate the administrator login.
             string username = textBox1.Text.Trim();
@@ -64,11 +63,8 @@ namespace GROUP_PROJECT
             {
                 string passwordHash = PasswordSecurity.GetHashSha256(password);
 
-                AuthenticationResult user = await Task.Run(() =>
-                {
-                    return db.Adlaw_Authenticate(username, passwordHash)
-                        .FirstOrDefault();
-                });
+                AuthenticationResult user = db.Adlaw_Authenticate(
+                    username, passwordHash).FirstOrDefault();
 
                 if (user == null)
                 {

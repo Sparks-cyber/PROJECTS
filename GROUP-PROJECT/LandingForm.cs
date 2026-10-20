@@ -18,9 +18,15 @@ namespace GROUP_PROJECT
         {
             // Open the administrator login screen.
             LoginForm login = new LoginForm();
-            login.FormClosed += delegate { this.Show(); };
+            login.FormClosed += LoginClosed;
             login.Show();
             this.Hide();
+        }
+
+        private void LoginClosed(object sender, FormClosedEventArgs e)
+        {
+            // Show the landing page after the login closes.
+            this.Show();
         }
     }
 }

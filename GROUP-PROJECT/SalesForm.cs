@@ -49,10 +49,24 @@ namespace GROUP_PROJECT
                 gridSales.Columns["Subtotal"].DefaultCellStyle.Format = "₱#,##0.00";
                 gridSales.Columns["SaleDate"].DefaultCellStyle.Format = "MMM dd, yyyy  h:mm tt";
 
-                int orderCount = sales.Select(sale => sale.SaleID).Distinct().Count();
-                decimal totalSales = sales.Sum(sale => sale.Subtotal);
+                List<int> orderNumbers = new List<int>();
+                int itemsSold = 0;
+                decimal totalSales = 0;
+
+                foreach (SaleResult sale in sales)
+                {
+                    if (!orderNumbers.Contains(sale.SaleID))
+                    {
+                        orderNumbers.Add(sale.SaleID);
+                    }
+
+                    itemsSold += sale.Quantity;
+                    totalSales += sale.Subtotal;
+                }
+
+                int orderCount = orderNumbers.Count;
                 lblOrdersValue.Text = orderCount.ToString();
-                lblItemsValue.Text = sales.Sum(sale => sale.Quantity).ToString();
+                lblItemsValue.Text = itemsSold.ToString();
                 lblRevenueValue.Text = "₱" + totalSales.ToString("N2");
                 lblSummary.Text = sales.Count + " sale item(s) recorded";
                 gridSales.ClearSelection();

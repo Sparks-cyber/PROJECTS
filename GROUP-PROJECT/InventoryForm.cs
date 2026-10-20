@@ -10,7 +10,10 @@ namespace GROUP_PROJECT
     {
         private readonly AdlawDataContext db = new AdlawDataContext();
 
-        public InventoryForm() { InitializeComponent(); }
+        public InventoryForm()
+        {
+            InitializeComponent();
+        }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
@@ -22,8 +25,14 @@ namespace GROUP_PROJECT
         private void InventoryForm_Load(object sender, EventArgs e)
         {
             // Load the current product inventory.
-            try { RefreshInventory(); }
-            catch (Exception ex) { ShowError("Unable to load Inventory.", ex); }
+            try
+            {
+                RefreshInventory();
+            }
+            catch (Exception ex)
+            {
+                ShowError("Unable to load Inventory.", ex);
+            }
         }
 
         private void RefreshInventory()
@@ -36,11 +45,27 @@ namespace GROUP_PROJECT
             gridInventory.Columns["ItemCode"].HeaderText = "ITEM CODE";
             gridInventory.Columns["ItemName"].HeaderText = "ITEM NAME";
             gridInventory.Columns["Stock"].HeaderText = "AVAILABLE STOCK";
+
+            int lowStockCount = 0;
+            foreach (InventoryResult product in inventory)
+            {
+                if (product.Stock <= 5)
+                {
+                    lowStockCount++;
+                }
+            }
+
             lblSummary.Text = inventory.Count + " product(s)   •   " +
-                inventory.Count(product => product.Stock <= 5) + " low stock";
+                lowStockCount + " low stock";
+
             foreach (DataGridViewRow row in gridInventory.Rows)
+            {
                 if (Convert.ToInt32(row.Cells["Stock"].Value) <= 5)
+                {
                     row.DefaultCellStyle.BackColor = System.Drawing.Color.MistyRose;
+                }
+            }
+
             gridInventory.ClearSelection();
             ProductChanged(null, EventArgs.Empty);
         }
@@ -50,9 +75,13 @@ namespace GROUP_PROJECT
             // Show the selected product stock.
             InventoryResult product = cboProduct.SelectedItem as InventoryResult;
             if (product == null)
+            {
                 lblProductDetails.Text = "No product available.";
+            }
             else
+            {
                 lblProductDetails.Text = "Current stock: " + product.Stock;
+            }
         }
 
         private void RestockProduct(object sender, EventArgs e)
@@ -75,7 +104,10 @@ namespace GROUP_PROJECT
                 numQuantity.Value = 1;
                 RefreshInventory();
             }
-            catch (SqlException ex) { ShowError("Unable to restock.", ex); }
+            catch (SqlException ex)
+            {
+                ShowError("Unable to restock.", ex);
+            }
         }
 
         private static void ShowError(string title, Exception ex)
