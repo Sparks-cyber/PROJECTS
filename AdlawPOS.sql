@@ -109,8 +109,6 @@ CREATE PROCEDURE Adlaw_Authenticate
     @PasswordHash char(64)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Match the username and hashed password
     SELECT UserID, Username, DisplayName, Role
     FROM UserAccounts
@@ -124,8 +122,6 @@ GO
 CREATE PROCEDURE Adlaw_RetrieveProducts
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Return products that are not deleted
     SELECT ProductID, ItemCode, ItemName, CategoryID,
            Price, Stock, ImagePath, IsDeleted
@@ -139,8 +135,6 @@ CREATE PROCEDURE Adlaw_SearchProducts
     @ItemName nvarchar(150)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Find active products with a matching name
     SELECT ProductID, ItemCode, ItemName, CategoryID,
            Price, Stock, ImagePath, IsDeleted
@@ -154,8 +148,6 @@ GO
 CREATE PROCEDURE Adlaw_RetrieveDeletedProducts
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Return products marked as deleted
     SELECT ProductID, ItemCode, ItemName, CategoryID,
            Price, Stock, ImagePath, IsDeleted
@@ -173,8 +165,6 @@ CREATE PROCEDURE Adlaw_AddProduct
     @ImagePath nvarchar(500)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Use a temporary unique code until the identity value is available
     INSERT INTO Products
         (ItemCode, ItemName, CategoryID, Price, Stock, ImagePath, IsDeleted)
@@ -203,8 +193,6 @@ CREATE PROCEDURE Adlaw_UpdateProduct
     @ImagePath nvarchar(500)
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Save the edited product details
     UPDATE Products
     SET ItemCode = @ItemCode,
@@ -224,8 +212,6 @@ CREATE PROCEDURE Adlaw_SoftDeleteProduct
     @ProductID int
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Hide the product from active lists
     UPDATE Products
     SET IsDeleted = 1
@@ -240,8 +226,6 @@ CREATE PROCEDURE Adlaw_RestoreProduct
     @ProductID int
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Return the product to active lists
     UPDATE Products
     SET IsDeleted = 0
@@ -256,8 +240,6 @@ CREATE PROCEDURE Adlaw_HardDeleteProduct
     @ProductID int
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Remove an already deleted product permanently
     DELETE FROM Products
     WHERE ProductID = @ProductID
@@ -270,8 +252,6 @@ GO
 CREATE PROCEDURE Adlaw_CreateSaleHeader
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Start an empty sale for the customer cart
     INSERT INTO Sales (TotalAmount)
     VALUES (0);
@@ -287,8 +267,6 @@ CREATE PROCEDURE Adlaw_AddSaleItem
     @Quantity int
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     DECLARE @UnitPrice decimal(18, 2);
     DECLARE @UpdatedRows int;
 
@@ -332,8 +310,6 @@ GO
 CREATE PROCEDURE Adlaw_RetrieveSales
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Return every saved sale item
     SELECT S.SaleID, S.SaleDate, SI.ItemCode, SI.ItemName,
            SI.Quantity, SI.UnitPrice, SI.Subtotal
@@ -346,8 +322,6 @@ GO
 CREATE PROCEDURE Adlaw_RetrieveInventory
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Return stock for every active product
     SELECT ProductID, ItemCode, ItemName, Stock
     FROM Products
@@ -361,8 +335,6 @@ CREATE PROCEDURE Adlaw_RestockProduct
     @Quantity int
 AS
 BEGIN
-    SET NOCOUNT ON;
-
     -- Increase the selected product stock
     UPDATE Products
     SET Stock = Stock + @Quantity
