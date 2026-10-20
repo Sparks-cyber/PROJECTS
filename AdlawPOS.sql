@@ -189,7 +189,6 @@ BEGIN
     SET ItemCode = CONCAT('PRD-', RIGHT(CONCAT('000000', @NewProductID), 6))
     WHERE ProductID = @NewProductID;
 
-    RETURN @@ROWCOUNT;
 END;
 GO
 
@@ -217,7 +216,6 @@ BEGIN
     WHERE ProductID = @ProductID
       AND IsDeleted = 0;
 
-    RETURN @@ROWCOUNT;
 END;
 GO
 
@@ -234,7 +232,6 @@ BEGIN
     WHERE ProductID = @ProductID
       AND IsDeleted = 0;
 
-    RETURN @@ROWCOUNT;
 END;
 GO
 
@@ -251,7 +248,6 @@ BEGIN
     WHERE ProductID = @ProductID
       AND IsDeleted = 1;
 
-    RETURN @@ROWCOUNT;
 END;
 GO
 
@@ -267,63 +263,6 @@ BEGIN
     WHERE ProductID = @ProductID
       AND IsDeleted = 1;
 
-    RETURN @@ROWCOUNT;
-END;
-GO
-
--- Create a sale and reduce the product stock
-CREATE PROCEDURE Adlaw_CreateSale
-    @ProductID int,
-    @Quantity int
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SET XACT_ABORT ON;
-
-    DECLARE @UnitPrice decimal(18, 2);
-    DECLARE @ItemCode nvarchar(50);
-    DECLARE @ItemName nvarchar(150);
-    DECLARE @SaleID int;
-    DECLARE @SoldProduct TABLE
-    (
-        UnitPrice decimal(18, 2),
-        ItemCode nvarchar(50),
-        ItemName nvarchar(150)
-    );
-
-    BEGIN TRANSACTION;
-
-    -- Lock and reduce stock only when enough quantity remains
-    UPDATE Products
-    SET Stock = Stock - @Quantity
-    OUTPUT inserted.Price, inserted.ItemCode, inserted.ItemName
-        INTO @SoldProduct (UnitPrice, ItemCode, ItemName)
-    WHERE ProductID = @ProductID
-      AND IsDeleted = 0
-      AND @Quantity > 0
-      AND Stock >= @Quantity;
-
-    SELECT @UnitPrice = Price,
-           @ItemCode = ItemCode,
-           @ItemName = ItemName
-    FROM @SoldProduct;
-
-    INSERT INTO Sales (TotalAmount)
-    SELECT @UnitPrice * @Quantity
-    FROM @SoldProduct;
-
-    SET @SaleID = SCOPE_IDENTITY();
-
-    INSERT INTO SaleItems
-        (SaleID, ProductID, ItemCode, ItemName,
-         Quantity, UnitPrice, Subtotal)
-    SELECT @SaleID, @ProductID, @ItemCode, @ItemName,
-           @Quantity, @UnitPrice, @UnitPrice * @Quantity
-    FROM @SoldProduct;
-
-    COMMIT TRANSACTION;
-
-    RETURN COALESCE(@SaleID, 0);
 END;
 GO
 
@@ -350,41 +289,42 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    DECLARE @SoldProduct TABLE
-    (
-        ProductID int,
-        ItemCode nvarchar(50),
-        ItemName nvarchar(150),
-        UnitPrice decimal(18, 2)
-    );
+    DECLARE @UnitPrice decimal(18, 2);
+    DECLARE @UpdatedRows int;
+
+    -- Read the selected product price
+    SELECT @UnitPrice = Price
+    FROM Products
+    WHERE ProductID = @ProductID
+      AND IsDeleted = 0;
 
     -- Reduce stock only when enough quantity remains
     UPDATE Products
     SET Stock = Stock - @Quantity
-    OUTPUT inserted.ProductID, inserted.ItemCode,
-           inserted.ItemName, inserted.Price
-        INTO @SoldProduct
     WHERE ProductID = @ProductID
       AND IsDeleted = 0
       AND @Quantity > 0
       AND Stock >= @Quantity;
 
+    SET @UpdatedRows = @@ROWCOUNT;
+
+    -- Save the item only when stock was updated
     INSERT INTO SaleItems
         (SaleID, ProductID, ItemCode, ItemName,
          Quantity, UnitPrice, Subtotal)
     SELECT @SaleID, ProductID, ItemCode, ItemName,
-           @Quantity, UnitPrice, UnitPrice * @Quantity
-    FROM @SoldProduct;
+           @Quantity, Price, Price * @Quantity
+    FROM Products
+    WHERE ProductID = @ProductID
+      AND @UpdatedRows = 1;
 
+    -- Add the item subtotal to the sale total
     UPDATE Sales
-    SET TotalAmount = TotalAmount +
-        COALESCE((SELECT UnitPrice * @Quantity FROM @SoldProduct), 0)
-    WHERE SaleID = @SaleID;
+    SET TotalAmount = TotalAmount + (@UnitPrice * @Quantity)
+    WHERE SaleID = @SaleID
+      AND @UpdatedRows = 1;
 
-    DECLARE @AddedItemCount int;
-    SELECT @AddedItemCount = COUNT(*) FROM @SoldProduct;
-
-    RETURN @AddedItemCount;
+    RETURN @UpdatedRows;
 END;
 GO
 
@@ -429,6 +369,5 @@ BEGIN
     WHERE ProductID = @ProductID
       AND IsDeleted = 0;
 
-    RETURN @@ROWCOUNT;
 END;
 GO

@@ -68,14 +68,10 @@ namespace GROUP_PROJECT
 
             try
             {
-                int updated = db.Adlaw_RestockProduct(
+                db.Adlaw_RestockProduct(
                     product.ProductID, (int)numQuantity.Value);
-                if (updated == 0)
-                    MessageBox.Show("The product is no longer available.",
-                        "Adlaw POS", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                else
-                    MessageBox.Show("Stock updated successfully.", "Adlaw POS",
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Stock updated successfully.", "Adlaw POS",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 numQuantity.Value = 1;
                 RefreshInventory();
             }
