@@ -1,4 +1,5 @@
 using System;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -101,9 +102,28 @@ namespace GROUP_PROJECT
                 return;
             }
 
-            db.Adlaw_CreateSale(product.ProductID, quantity);
-            MessageBox.Show("Sale completed successfully.", "Adlaw POS");
-            RefreshData();
+            try
+            {
+                // Save the sale and let SQL verify the current stock.
+                int saleID = db.Adlaw_CreateSale(product.ProductID, quantity);
+                if (saleID == 0)
+                {
+                    MessageBox.Show("Product is unavailable or has insufficient stock.",
+                        "Unable to complete sale", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    RefreshData();
+                    return;
+                }
+
+                MessageBox.Show("Sale completed successfully.", "Adlaw POS");
+                RefreshData();
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message, "Unable to complete sale",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                RefreshData();
+            }
         }
 
         protected override void Dispose(bool disposing)

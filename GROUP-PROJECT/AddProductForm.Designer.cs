@@ -154,7 +154,7 @@
                 new System.Drawing.Point(35, 120);
 
             this.lblItemCode.Text =
-                "ITEM CODE";
+                "ITEM CODE (AUTO)";
 
 
             // ITEM CODE

@@ -5,11 +5,15 @@ namespace GROUP_PROJECT
 {
     public partial class AddProductForm : Form
     {
+        private bool editingProduct;
+
         public string ItemCode
         {
             get
             {
-                return txtItemCode.Text.Trim();
+                return editingProduct
+                    ? txtItemCode.Text.Trim()
+                    : null;
             }
         }
 
@@ -58,17 +62,25 @@ namespace GROUP_PROJECT
             InitializeComponent();
 
             cboCategory.SelectedIndex = 0;
+            txtItemCode.Text = "AUTO-GENERATED";
+            txtItemCode.ReadOnly = true;
+            txtItemCode.TabStop = false;
+            txtItemCode.BackColor = System.Drawing.Color.Gainsboro;
         }
 
         public AddProductForm(ProductResult product)
             : this()
         {
+            editingProduct = true;
             Text = "Adlaw POS - Edit Product";
             lblTitle.Text = "EDIT PRODUCT";
             lblSubtitle.Text = "Update the selected product details.";
             btnAdd.Text = "UPDATE";
 
             txtItemCode.Text = product.ItemCode;
+            txtItemCode.ReadOnly = false;
+            txtItemCode.TabStop = true;
+            txtItemCode.BackColor = System.Drawing.Color.White;
             txtItemName.Text = product.ItemName;
             cboCategory.SelectedIndex = product.CategoryID - 1;
             numPrice.Value = product.Price;
@@ -101,7 +113,7 @@ namespace GROUP_PROJECT
             object sender,
             EventArgs e)
         {
-            if (ItemCode == "")
+            if (editingProduct && ItemCode == "")
             {
                 MessageBox.Show(
                     "Enter Item Code.",

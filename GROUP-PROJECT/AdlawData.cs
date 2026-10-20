@@ -72,7 +72,6 @@ namespace GROUP_PROJECT
 
         [Function(Name = "Adlaw_AddProduct")]
         public int Adlaw_AddProduct(
-            string itemCode,
             string itemName,
             int categoryID,
             decimal price,
@@ -82,7 +81,6 @@ namespace GROUP_PROJECT
             return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
-                itemCode,
                 itemName,
                 categoryID,
                 price,

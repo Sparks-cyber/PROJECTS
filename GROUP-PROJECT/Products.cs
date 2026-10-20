@@ -86,7 +86,6 @@ namespace GROUP_PROJECT
 
                 // ADD
                 db.Adlaw_AddProduct(
-                    add.ItemCode,
                     add.ItemName,
                     add.CategoryID,
                     add.Price,
@@ -153,9 +152,7 @@ namespace GROUP_PROJECT
 
             if (result == DialogResult.Yes)
             {
-                Form1 login = new Form1();
-
-                login.Show();
+                // Closing returns control to the original login form.
                 this.Close();
             }
         }

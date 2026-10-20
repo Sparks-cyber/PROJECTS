@@ -1,0 +1,8 @@
+# Visual Studio user files
+.vs/
+*.suo
+*.user
+
+# Generated build output
+[Bb]in/
+[Oo]bj/

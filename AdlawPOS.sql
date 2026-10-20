@@ -125,7 +125,6 @@ GO
 
 -- Add a new product
 CREATE PROCEDURE Adlaw_AddProduct
-    @ItemCode nvarchar(50),
     @ItemName nvarchar(150),
     @CategoryID int,
     @Price decimal(18, 2),
@@ -135,10 +134,19 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- Use a temporary unique code until the identity value is available
     INSERT INTO Products
         (ItemCode, ItemName, CategoryID, Price, Stock, ImagePath, IsDeleted)
     VALUES
-        (@ItemCode, @ItemName, @CategoryID, @Price, @Stock, @ImagePath, 0);
+        (CONCAT('TEMP-', CONVERT(nvarchar(36), NEWID())),
+         @ItemName, @CategoryID, @Price, @Stock, @ImagePath, 0);
+
+    DECLARE @NewProductID int = CONVERT(int, SCOPE_IDENTITY());
+
+    -- Replace the temporary code with the final automatic item code
+    UPDATE Products
+    SET ItemCode = CONCAT('PRD-', RIGHT(CONCAT('000000', @NewProductID), 6))
+    WHERE ProductID = @NewProductID;
 
     RETURN @@ROWCOUNT;
 END;
@@ -231,36 +239,46 @@ BEGIN
     DECLARE @ItemCode nvarchar(50);
     DECLARE @ItemName nvarchar(150);
     DECLARE @SaleID int;
+    DECLARE @SoldProduct TABLE
+    (
+        UnitPrice decimal(18, 2),
+        ItemCode nvarchar(50),
+        ItemName nvarchar(150)
+    );
+
+    BEGIN TRANSACTION;
+
+    -- Lock and reduce stock only when enough quantity remains
+    UPDATE Products
+    SET Stock = Stock - @Quantity
+    OUTPUT inserted.Price, inserted.ItemCode, inserted.ItemName
+        INTO @SoldProduct (UnitPrice, ItemCode, ItemName)
+    WHERE ProductID = @ProductID
+      AND IsDeleted = 0
+      AND @Quantity > 0
+      AND Stock >= @Quantity;
 
     SELECT @UnitPrice = Price,
            @ItemCode = ItemCode,
            @ItemName = ItemName
-    FROM Products
-    WHERE ProductID = @ProductID
-      AND IsDeleted = 0;
-
-    BEGIN TRANSACTION;
-
-    UPDATE Products
-    SET Stock = Stock - @Quantity
-    WHERE ProductID = @ProductID
-      AND IsDeleted = 0;
+    FROM @SoldProduct;
 
     INSERT INTO Sales (TotalAmount)
-    VALUES (@UnitPrice * @Quantity);
+    SELECT @UnitPrice * @Quantity
+    FROM @SoldProduct;
 
     SET @SaleID = SCOPE_IDENTITY();
 
     INSERT INTO SaleItems
         (SaleID, ProductID, ItemCode, ItemName,
          Quantity, UnitPrice, Subtotal)
-    VALUES
-        (@SaleID, @ProductID, @ItemCode, @ItemName,
-         @Quantity, @UnitPrice, @UnitPrice * @Quantity);
+    SELECT @SaleID, @ProductID, @ItemCode, @ItemName,
+           @Quantity, @UnitPrice, @UnitPrice * @Quantity
+    FROM @SoldProduct;
 
     COMMIT TRANSACTION;
 
-    RETURN @SaleID;
+    RETURN COALESCE(@SaleID, 0);
 END;
 GO
 

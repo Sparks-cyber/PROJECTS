@@ -34,8 +34,10 @@ namespace GROUP_PROJECT
             if (textBox1.Text == "admin" &&
      txtPassword.Text == "admin123")
             {
-               Products products = new Products();
+                Products products = new Products();
 
+                // Return to this login form when the main form closes.
+                products.FormClosed += Products_FormClosed;
                 products.Show();
                 this.Hide();
             }
@@ -45,6 +47,12 @@ namespace GROUP_PROJECT
                     "Invalid username or password."
                 );
             }
+        }
+
+        private void Products_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            txtPassword.Clear();
+            this.Show();
         }
     }
 }
