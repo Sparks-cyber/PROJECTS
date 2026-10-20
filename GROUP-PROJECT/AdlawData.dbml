@@ -66,6 +66,7 @@
     <Parameter Name="Price" Parameter="price" Type="System.Decimal" DbType="Decimal(18,2)" />
     <Parameter Name="Stock" Parameter="stock" Type="System.Int32" DbType="Int" />
     <Parameter Name="ImagePath" Parameter="imagePath" Type="System.String" DbType="VarChar(500)" />
+    <Return Type="System.Int32" />
   </Function>
 
   <!-- Update a product -->
@@ -77,21 +78,25 @@
     <Parameter Name="Price" Parameter="price" Type="System.Decimal" DbType="Decimal(18,2)" />
     <Parameter Name="Stock" Parameter="stock" Type="System.Int32" DbType="Int" />
     <Parameter Name="ImagePath" Parameter="imagePath" Type="System.String" DbType="VarChar(500)" />
+    <Return Type="System.Int32" />
   </Function>
 
   <!-- Soft delete a product -->
   <Function Name="Adlaw_SoftDeleteProduct" Method="Adlaw_SoftDeleteProduct">
     <Parameter Name="ProductID" Parameter="productID" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
   </Function>
 
   <!-- Restore a product -->
   <Function Name="Adlaw_RestoreProduct" Method="Adlaw_RestoreProduct">
     <Parameter Name="ProductID" Parameter="productID" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
   </Function>
 
   <!-- Permanently delete a product -->
   <Function Name="Adlaw_HardDeleteProduct" Method="Adlaw_HardDeleteProduct">
     <Parameter Name="ProductID" Parameter="productID" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
   </Function>
 
   <!-- Create a sale header -->
@@ -135,5 +140,6 @@
   <Function Name="Adlaw_RestockProduct" Method="Adlaw_RestockProduct">
     <Parameter Name="ProductID" Parameter="productID" Type="System.Int32" DbType="Int" />
     <Parameter Name="Quantity" Parameter="quantity" Type="System.Int32" DbType="Int" />
+    <Return Type="System.Int32" />
   </Function>
 </Database>

@@ -90,14 +90,14 @@ namespace GROUP_PROJECT
         }
 
         [Function(Name = "Adlaw_AddProduct")]
-        public void Adlaw_AddProduct(
+        public int Adlaw_AddProduct(
             string itemName,
             int categoryID,
             decimal price,
             int stock,
             string imagePath)
         {
-            ExecuteMethodCall(
+            return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
                 itemName,
@@ -105,11 +105,11 @@ namespace GROUP_PROJECT
                 price,
                 stock,
                 imagePath
-            );
+            ).ReturnValue;
         }
 
         [Function(Name = "Adlaw_UpdateProduct")]
-        public void Adlaw_UpdateProduct(
+        public int Adlaw_UpdateProduct(
             int productID,
             string itemCode,
             string itemName,
@@ -118,7 +118,7 @@ namespace GROUP_PROJECT
             int stock,
             string imagePath)
         {
-            ExecuteMethodCall(
+            return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
                 productID,
@@ -128,37 +128,37 @@ namespace GROUP_PROJECT
                 price,
                 stock,
                 imagePath
-            );
+            ).ReturnValue;
         }
 
         [Function(Name = "Adlaw_SoftDeleteProduct")]
-        public void Adlaw_SoftDeleteProduct(int productID)
+        public int Adlaw_SoftDeleteProduct(int productID)
         {
-            ExecuteMethodCall(
+            return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
                 productID
-            );
+            ).ReturnValue;
         }
 
         [Function(Name = "Adlaw_RestoreProduct")]
-        public void Adlaw_RestoreProduct(int productID)
+        public int Adlaw_RestoreProduct(int productID)
         {
-            ExecuteMethodCall(
+            return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
                 productID
-            );
+            ).ReturnValue;
         }
 
         [Function(Name = "Adlaw_HardDeleteProduct")]
-        public void Adlaw_HardDeleteProduct(int productID)
+        public int Adlaw_HardDeleteProduct(int productID)
         {
-            ExecuteMethodCall(
+            return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
                 productID
-            );
+            ).ReturnValue;
         }
 
         [Function(Name = "Adlaw_RetrieveDeletedProducts")]
@@ -211,14 +211,14 @@ namespace GROUP_PROJECT
         }
 
         [Function(Name = "Adlaw_RestockProduct")]
-        public void Adlaw_RestockProduct(int productID, int quantity)
+        public int Adlaw_RestockProduct(int productID, int quantity)
         {
-            ExecuteMethodCall(
+            return (int)ExecuteMethodCall(
                 this,
                 (MethodInfo)MethodInfo.GetCurrentMethod(),
                 productID,
                 quantity
-            );
+            ).ReturnValue;
         }
     }
 }
